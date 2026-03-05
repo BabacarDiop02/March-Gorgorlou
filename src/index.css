@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Marché Gorgorlou — "L'Ordre dans le Chaos Coloré" */
+    --background: 48 100% 96%; /* Blanc cassé crème */
+    --foreground: 20 45% 20%; /* Brun terreux */
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 45% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 45% 20%;
+
+    --primary: 25 95% 53%; /* Orange Vif #F97316 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 142 71% 45%; /* Vert Frais #22C55E */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 40 33% 92%;
+    --muted-foreground: 20 15% 46%;
+
+    --accent: 48 96% 53%; /* Jaune Soleil #FACC15 */
+    --accent-foreground: 20 45% 20%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
+    --ring: 25 95% 53%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --earth: 20 45% 20%; /* Brun terreux #4B2E1E */
+    --earth-light: 30 30% 94%;
+    --orange-glow: 25 95% 53%;
+    --green-fresh: 142 71% 45%;
+    --yellow-sun: 48 96% 53%;
+    --warm-bg: 33 100% 97%; /* #FFF7ED */
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 20 30% 8%;
+    --foreground: 40 30% 92%;
+    --card: 20 30% 10%;
+    --card-foreground: 40 30% 92%;
+    --popover: 20 30% 10%;
+    --popover-foreground: 40 30% 92%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 142 71% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 20% 18%;
+    --muted-foreground: 30 15% 60%;
+    --accent: 48 96% 53%;
+    --accent-foreground: 20 45% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 20% 18%;
+    --input: 20 20% 18%;
+    --ring: 25 95% 53%;
+    --earth: 30 20% 85%;
+    --earth-light: 20 20% 15%;
+    --warm-bg: 20 30% 12%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .glass-header {
+    @apply bg-white/80 backdrop-blur-md border-b border-border/50 shadow-sm;
+  }
+
+  .wax-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23F97316' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .section-fade-in {
+    @apply opacity-0 translate-y-6;
+    animation: sectionFadeIn 0.6s ease-out forwards;
+  }
+
+  .btn-gorgorlou {
+    @apply bg-primary text-primary-foreground font-heading font-bold px-8 py-4 rounded-xl shadow-lg transition-all duration-200;
+    box-shadow: 0 8px 24px -6px hsl(var(--primary) / 0.4);
+  }
+  .btn-gorgorlou:hover {
+    @apply brightness-110 scale-[1.03];
+  }
+  .btn-gorgorlou:active {
+    @apply scale-95;
+  }
+
+  .btn-whatsapp {
+    @apply border-2 border-secondary text-secondary font-heading font-bold px-8 py-4 rounded-xl transition-all duration-200 bg-transparent;
+  }
+  .btn-whatsapp:hover {
+    @apply bg-secondary text-secondary-foreground;
+  }
+
+  .bento-card {
+    @apply relative overflow-hidden rounded-2xl cursor-pointer;
+  }
+  .bento-card img {
+    @apply w-full h-full object-cover transition-transform duration-700 ease-out;
+  }
+  .bento-card:hover img {
+    @apply scale-110;
+  }
+  .bento-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent;
+  }
+
+  .value-card {
+    @apply bg-white rounded-2xl p-8 text-center transition-all duration-300 border border-border/50;
+    box-shadow: 0 4px 20px -4px hsl(var(--earth) / 0.08);
+  }
+  .value-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 32px -8px hsl(var(--primary) / 0.15);
+  }
+
+  .testimonial-card {
+    @apply bg-white rounded-2xl p-6 border border-border/50 shadow-sm;
+  }
+
+  .footer-section {
+    background-color: hsl(var(--earth));
+    color: hsl(48 100% 96%);
+  }
+}
+
+@keyframes sectionFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

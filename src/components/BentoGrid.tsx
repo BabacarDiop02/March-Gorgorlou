@@ -1,5 +1,5 @@
-import { ArrowUpRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import catMaison from "@/assets/cat-maison.jpg";
 import catFetes from "@/assets/cat-fetes.jpg";
 import catVolaille from "@/assets/cat-volaille.jpg";
@@ -7,30 +7,30 @@ import catMarche from "@/assets/cat-marche.jpg";
 
 const categories = [
   {
-    title: "Ameublement & Confort",
-    subtitle: "Le bois massif pour durer une vie.",
-    badge: "Arrivages",
+    title: "Mobilier Noble",
+    subtitle: "L'excellence du bois massif pour votre héritage.",
+    badge: "Prestige",
     img: catMaison,
     gridArea: "maison",
   },
   {
-    title: "Art de la Table & Jetable",
-    subtitle: "Pour vos baptêmes et cérémonies.",
-    badge: "Promos",
+    title: "Art de la Fête",
+    subtitle: "Réceptions d'exception & Art de la table.",
+    badge: "Exclusif",
     img: catFetes,
     gridArea: "fetes",
   },
   {
-    title: "Volaille & Dérivés",
-    subtitle: "Poulets marinés et œufs frais.",
-    badge: "Frais du jour",
+    title: "Ferme Authentique",
+    subtitle: "Volailles élevées en plein air & œufs frais.",
+    badge: "Terroir",
     img: catVolaille,
     gridArea: "volaille",
   },
   {
-    title: "Mer & Maraîcher",
-    subtitle: "Thiof, Capitaine et légumes du jour.",
-    badge: "Arrivages",
+    title: "Fraîcheur du Jour",
+    subtitle: "Le meilleur de l'océan & du potager.",
+    badge: "Arrivage",
     img: catMarche,
     gridArea: "marche",
   },
@@ -41,105 +41,107 @@ const BentoGrid = () => {
 
   return (
     <section id="nos-univers" className="py-20 wax-pattern">
-      <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-3">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16 animate-fade-in-up">
+          <h2 className="font-heading text-4xl sm:text-6xl font-black text-foreground mb-4 tracking-tighter">
             Nos <span className="text-primary">Univers</span>
           </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-md mx-auto">
-            Tout ce dont votre maison a besoin, en un seul endroit.
+          <p className="font-body text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
+            Explorez nos univers thématiques, où chaque produit est choisi pour son excellence et son authenticité.
           </p>
         </div>
 
         {/* Desktop: asymmetric 3-col / 2-row grid */}
         <div
-          className="hidden md:grid gap-4 h-[640px]"
+          className="hidden md:grid gap-6 h-[720px]"
           style={{
-            gridTemplateColumns: "2fr 1fr",
+            gridTemplateColumns: "1.2fr 1fr",
             gridTemplateRows: "1fr 1fr",
             gridTemplateAreas: `"maison fetes" "volaille marche"`,
           }}
         >
-          {categories.map((cat) => (
-            <div
+          {categories.map((cat, index) => (
+            <Link
               key={cat.title}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer"
+              to={`/univers/${cat.gridArea}`}
+              className={`group relative overflow-hidden rounded-[2.5rem] hover-card-premium animate-fade-in-up stagger-${(index % 4) + 1}`}
               style={{ gridArea: cat.gridArea }}
-              onClick={() => navigate(`/univers/${cat.gridArea}`)}
             >
               {/* Image */}
-              <img
-                src={cat.img}
-                alt={cat.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              </div>
 
               {/* Arrow icon */}
-              <div className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-foreground/20 backdrop-blur-sm flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
-                <ArrowUpRight className="w-5 h-5 text-primary-foreground" />
+              <div className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:scale-110">
+                <ArrowRight className="w-6 h-6 text-white" />
               </div>
 
               {/* Badge */}
-              <div className="absolute top-4 left-4 z-10">
-                <span className="bg-accent text-accent-foreground font-heading text-xs font-bold px-3 py-1 rounded-full">
+              <div className="absolute top-6 left-6 z-10 transition-transform duration-500 group-hover:translate-x-2">
+                <span className="bg-white/20 backdrop-blur-md border border-white/30 text-white font-heading text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
                   {cat.badge}
                 </span>
               </div>
 
               {/* Text */}
-              <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
-                <h3 className="font-heading text-xl sm:text-2xl font-bold text-primary-foreground drop-shadow-lg">
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-10">
+                <h3 className="font-heading text-3xl sm:text-4xl font-black text-white leading-tight mb-2 drop-shadow-2xl">
                   {cat.title}
                 </h3>
-                <p className="font-body text-sm text-primary-foreground/80 mt-1 drop-shadow">
+                <p className="font-body text-lg text-white/80 group-hover:text-white transition-colors line-clamp-2 max-w-sm">
                   {cat.subtitle}
                 </p>
+                <div className="mt-6 flex items-center gap-2 font-heading font-bold text-sm text-primary group-hover:gap-4 transition-all opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0">
+                  Découvrir l'univers <ArrowRight size={18} />
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
         {/* Mobile: single column stack */}
-        <div className="md:hidden flex flex-col gap-4">
-          {categories.map((cat) => (
-            <div
+        <div className="md:hidden flex flex-col gap-6">
+          {categories.map((cat, index) => (
+            <Link
               key={cat.title}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer h-56"
-              onClick={() => navigate(`/univers/${cat.gridArea}`)}
+              to={`/univers/${cat.gridArea}`}
+              className={`group relative overflow-hidden rounded-[2rem] h-[360px] animate-fade-in-up stagger-${(index % 4) + 1} hover-card-premium`}
             >
-              <img
-                src={cat.img}
-                alt={cat.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-              <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-foreground/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary transition-colors duration-300">
-                <ArrowUpRight className="w-4 h-4 text-primary-foreground" />
+              <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               </div>
 
-              <div className="absolute top-3 left-3 z-10">
-                <span className="bg-accent text-accent-foreground font-heading text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+              <div className="absolute top-4 left-4 z-10">
+                <span className="bg-white/20 backdrop-blur-md border border-white/30 text-white font-heading text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
                   {cat.badge}
                 </span>
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-                <h3 className="font-heading text-base font-bold text-primary-foreground drop-shadow-lg">
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-8">
+                <h3 className="font-heading text-2xl font-black text-white mb-2">
                   {cat.title}
                 </h3>
-                <p className="font-body text-xs text-primary-foreground/80 mt-0.5 drop-shadow">
+                <p className="font-body text-sm text-white/80 line-clamp-2">
                   {cat.subtitle}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
     </section>
+
   );
 };
 

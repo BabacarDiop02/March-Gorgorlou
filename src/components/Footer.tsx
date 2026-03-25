@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { BRAND_CONFIG } from "@/lib/constants";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -10,14 +11,23 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🧺</span>
-              <span className="font-heading font-bold text-xl">
-                Marché Gorgorlou
-              </span>
+            <div className="flex items-center gap-4">
+              <img 
+                src="/images/logos/logo_marche_gorgorlou.svg" 
+                alt="Marché Gorgorlou" 
+                className="h-20 w-auto" 
+              />
+              <div className="flex flex-col leading-none">
+                <span className="font-heading font-black text-sm uppercase tracking-[0.1em] text-white">
+                  MARCHÉ
+                </span>
+                <span className="text-primary font-heading font-black text-2xl uppercase tracking-tighter -mt-1.5">
+                  GORGORLOU
+                </span>
+              </div>
             </div>
             <p className="font-body text-sm opacity-70 leading-relaxed">
-              L'esprit du marché sénégalais, modernisé pour vous. Qualité, prix et Teranga.
+              Gorgorlou réinvente l'expérience du marché sénégalais. Un pont entre tradition et modernité pour vous offrir le meilleur du terroir, livré avec le sourire.
             </p>
           </div>
 
@@ -31,7 +41,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone size={16} />
-                <span>+221 77 123 45 67</span>
+                <span>{BRAND_CONFIG.formattedPhone}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail size={16} />
@@ -42,8 +52,8 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h4 className="font-heading font-bold text-lg">Rejoignez la famille 🤝</h4>
-            <p className="font-body text-sm opacity-70">Recevez nos promos et offres exclusives.</p>
+            <h4 className="font-heading font-bold text-lg">Rejoignez la Communauté 🤝</h4>
+            <p className="font-body text-sm opacity-70">Soyez le premier informé de nos arrivages et offres exclusives 'Teranga'.</p>
             <form
               onSubmit={(e) => {
                 e.preventDefault();

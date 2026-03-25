@@ -4,19 +4,19 @@ const testimonials = [
   {
     name: "Fatou Diop",
     quartier: "Mermoz",
-    text: "Enfin un endroit où je trouve mon matelas et mon poulet pour la fête sans courir partout !",
+    text: "Trouver des meubles de qualité et de la volaille fraîche au même endroit est une petite révolution. J'ai commandé mon salon et mes œufs la même semaine, tout était parfait !",
     avatar: "👩🏾",
   },
   {
     name: "Ibrahima Ndiaye",
     quartier: "Parcelles Assainies",
-    text: "La livraison est vraiment rapide. J'ai commandé un lit le matin, il était là le soir même. Top !",
+    text: "En tant qu'entrepreneur, la livraison 'Gaw' est un atout précieux. Mon lit et mes bureaux sont arrivés en quelques heures. Un service d'une efficacité rare à Dakar.",
     avatar: "👨🏾",
   },
   {
     name: "Aminata Fall",
     quartier: "Almadies",
-    text: "Les prix sont imbattables et la qualité est au rendez-vous. Je recommande à toutes mes copines !",
+    text: "La finesse du bois massif m'a impressionnée. Gorgorlou propose un rapport qualité-prix imbattable. Je ne fais plus mon marché ailleurs pour mes grandes réceptions.",
     avatar: "👩🏾‍🦱",
   },
 ];
@@ -27,26 +27,29 @@ const Testimonials = () => {
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-3">
-            Les Dakarois nous font <span className="text-primary">confiance</span>
+            L'excellence racontée par <span className="text-primary">nos clients</span>
           </h2>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {testimonials.map((t) => (
-            <div key={t.name} className="testimonial-card flex flex-col gap-4">
-              <div className="flex gap-1">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className={`p-8 rounded-[2.5rem] bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-sm hover-card-premium animate-fade-in-up stagger-${(index % 3) + 1}`}
+            >
+              <div className="flex gap-1 text-primary mb-6">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} className="fill-accent text-accent" />
+                  <Star key={i} size={18} fill="currentColor" />
                 ))}
               </div>
-              <p className="font-body text-foreground/80 text-sm leading-relaxed italic">
-                "{t.text}"
-              </p>
-              <div className="flex items-center gap-3 mt-auto pt-4 border-t border-border/50">
-                <span className="text-2xl">{t.avatar}</span>
+              <p className="text-lg italic mb-8 leading-relaxed">"{testimonial.text}"</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center font-heading font-bold text-primary">
+                  {testimonial.name[0]}
+                </div>
                 <div>
-                  <p className="font-heading text-sm font-bold text-foreground">{t.name}</p>
-                  <p className="font-body text-xs text-muted-foreground">{t.quartier}</p>
+                  <p className="font-heading font-bold">{testimonial.name}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.quartier}</p>
                 </div>
               </div>
             </div>

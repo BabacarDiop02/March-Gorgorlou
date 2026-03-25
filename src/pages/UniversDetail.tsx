@@ -1,11 +1,14 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { universDetails } from "@/lib/universData";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageCircle, ChevronRight, CheckCircle2, ChevronLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, MessageCircle, ChevronRight, CheckCircle2, ChevronLeft, ChevronDown, ArrowRight, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useCart } from "@/hooks/useCart";
+import { BRAND_CONFIG } from "@/lib/constants";
+import { toast } from "sonner";
 
 const UniversDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -14,11 +17,17 @@ const UniversDetail = () => {
 
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         window.scrollTo(0, 0);
         setSelectedIndex(0);
     }, [slug]);
+
+    const openWhatsApp = (msg: string = "") => {
+        const text = msg || "Bonjour Gorgorlou, je souhaiterais avoir des informations sur l'univers " + data?.title;
+        window.open(BRAND_CONFIG.whatsappUrl(text), "_blank");
+    };
 
     if (!data) {
         return (
@@ -54,45 +63,45 @@ const UniversDetail = () => {
             <Header />
 
             {/* Hero Section */}
-            <section className="relative h-[50vh] min-h-[400px] flex items-center overflow-hidden">
+            <section className="relative min-h-[600px] lg:min-h-[80vh] flex items-center overflow-hidden py-20">
                 <div className="absolute inset-0 z-0">
                     <img
                         src={data.img}
                         alt={data.title}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
                 </div>
 
-                <div className="container mx-auto relative z-10 px-4">
-                    <Button
-                        variant="ghost"
-                        className="text-white mb-8 hover:bg-white/10"
-                        onClick={() => navigate("/")}
-                    >
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Retour
-                    </Button>
-                    <div className="max-w-2xl animate-fade-in-up">
-                        <h1 className="font-heading text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+                <div className="container mx-auto relative z-10 px-4 pt-24 pb-12">
+                    <div className="max-w-3xl animate-fade-in-up">
+                        <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-[1.1] drop-shadow-xl">
                             {data.title}
                         </h1>
-                        <p className="text-xl text-white/90 font-medium mb-8">
+                        <p className="text-lg md:text-xl text-white/90 font-medium mb-10 max-w-xl leading-relaxed drop-shadow-lg">
                             {data.subtitle}
                         </p>
-                        <div className="flex flex-wrap gap-4">
-                            <Button size="lg" className="rounded-full px-8 py-6 text-lg font-bold shadow-xl hover:scale-105 transition-transform">
-                                Explorer
-                            </Button>
-                            <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg font-bold bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 transition-all">
+                        <div className="flex flex-col sm:flex-row gap-6">
+                            <button 
+                                onClick={() => document.getElementById("details-section")?.scrollIntoView({ behavior: "smooth" })}
+                                className="btn-gorgorlou text-xl flex items-center justify-center gap-3"
+                            >
+                                <span>🚀</span> Explorer l'univers
+                            </button>
+                            <button 
+                                onClick={() => openWhatsApp()}
+                                className="btn-whatsapp text-xl flex items-center justify-center gap-3"
+                            >
+                                <MessageCircle size={22} />
                                 Nous contacter
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Details & Subcategories */}
-            <section className="py-20 bg-white dark:bg-zinc-950">
+            <section id="details-section" className="py-20 bg-white dark:bg-zinc-950">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                         <div>
@@ -208,7 +217,10 @@ const UniversDetail = () => {
                                     )}
 
                                     {/* CTA */}
-                                    <Button className="w-full mt-6 rounded-2xl py-5 font-bold flex items-center justify-center space-x-2">
+                                    <Button 
+                                        onClick={() => openWhatsApp("Bonjour, je suis intéressé par : " + current.name + " (" + data.title + ")")}
+                                        className="w-full mt-6 rounded-2xl py-5 font-bold flex items-center justify-center space-x-2"
+                                    >
                                         <MessageCircle className="w-5 h-5" />
                                         <span>Commander sur WhatsApp</span>
                                     </Button>
@@ -228,8 +240,8 @@ const UniversDetail = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {data.featuredProducts.map((product) => (
-                            <div key={product.id} className="group bg-white dark:bg-zinc-950 rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-zinc-100 dark:border-zinc-800">
+                        {data.featuredProducts.map((product, index) => (
+                            <div key={product.id} className={`group bg-white dark:bg-zinc-950 rounded-[2.5rem] overflow-hidden shadow-sm hover-card-premium animate-fade-in-up stagger-${(index % 3) + 1} border border-zinc-100 dark:border-zinc-800`}>
                                 <div className="h-64 overflow-hidden relative">
                                     <img
                                         src={product.image}
@@ -244,16 +256,78 @@ const UniversDetail = () => {
                                     <h3 className="font-heading text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
                                         {product.name}
                                     </h3>
-                                    <p className="text-muted-foreground mb-6 line-clamp-2">
-                                        Qualité exceptionnelle, sélectionnée avec soin pour répondre à vos exigences les plus élevées.
+                                    <p className="text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
+                                        L'excellence du terroir sénégalais, sélectionnée avec une passion infinie pour votre plus grand plaisir.
                                     </p>
-                                    <Button className="w-full rounded-2xl py-6 font-bold flex items-center justify-center space-x-2">
-                                        <MessageCircle className="w-5 h-5" />
-                                        <span>Commander sur WhatsApp</span>
-                                    </Button>
+                                    <div className="flex flex-col gap-3">
+                                        <button 
+                                            onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                                            className="btn-gorgorlou w-full flex items-center justify-center gap-2 py-4"
+                                        >
+                                            <ShoppingCart size={20} />
+                                            Ajouter au panier
+                                        </button>
+                                        <button 
+                                            onClick={() => openWhatsApp("Je souhaite commander en direct : " + product.name + " (" + product.price + ")")}
+                                            className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-primary/10 rounded-xl hover:bg-primary/5"
+                                        >
+                                            <MessageCircle size={18} />
+                                            Commander via WhatsApp
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Other Universes */}
+            <section className="py-24 bg-white dark:bg-zinc-950">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                        <div className="max-w-xl">
+                            <h2 className="font-heading text-4xl font-black mb-4 tracking-tight">
+                                Continuez votre exploration
+                            </h2>
+                            <p className="text-muted-foreground text-lg">
+                                Nos autres univers thématiques vous attendent pour sublimer votre quotidien.
+                            </p>
+                        </div>
+                        <Link 
+                            to="/" 
+                            className="font-heading font-bold text-primary hover:underline flex items-center gap-2 text-lg"
+                        >
+                            Voir tout le marché <ArrowRight size={20} />
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {Object.entries(universDetails)
+                            .filter(([key]) => key !== slug)
+                            .slice(0, 3)
+                            .map(([key, item]) => (
+                                <Link
+                                    key={key}
+                                    to={`/univers/${key}`}
+                                    className="group relative h-80 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+                                >
+                                    <img
+                                        src={item.img}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                    <div className="absolute bottom-8 left-8 right-8">
+                                        <h3 className="font-heading text-2xl font-bold text-white mb-2 leading-tight">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-white/70 text-sm line-clamp-1 group-hover:text-white transition-colors">
+                                            {item.subtitle}
+                                        </p>
+                                    </div>
+                                </Link>
+                            ))}
                     </div>
                 </div>
             </section>
@@ -262,15 +336,19 @@ const UniversDetail = () => {
             <section className="py-24 bg-primary relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 wax-pattern" />
                 <div className="container mx-auto px-4 text-center relative z-10">
-                    <h2 className="text-4xl md:text-5xl font-black text-white mb-8">
+                    <h2 className="font-heading text-4xl md:text-6xl font-black text-white mb-8 drop-shadow-lg">
                         Prêt à transformer votre quotidien ?
                     </h2>
-                    <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-                        Contactez-nous aujourd'hui pour plus d'informations sur nos produits et services.
+                    <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
+                        L'excellence est à un clic. Rejoignez la communauté Gorgorlou et savourez l'authenticité.
                     </p>
-                    <Button size="lg" variant="secondary" className="rounded-full px-12 py-8 text-xl font-black shadow-2xl hover:scale-105 transition-transform bg-white text-primary border-none">
-                        Nous Appeler Maintenant
-                    </Button>
+                    <button 
+                        onClick={() => openWhatsApp()}
+                        className="bg-white text-primary font-heading font-black px-12 py-6 rounded-2xl text-xl shadow-2xl hover:scale-105 transition-all hover:bg-zinc-100 flex items-center gap-3 mx-auto"
+                    >
+                        <MessageCircle size={24} />
+                        Passer commande sur WhatsApp
+                    </button>
                 </div>
             </section>
 

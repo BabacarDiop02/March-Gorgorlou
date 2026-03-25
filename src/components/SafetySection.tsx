@@ -6,21 +6,21 @@ import safetyGloves from "@/assets/safety-gloves.jpg";
 const products = [
   {
     img: safetyHelmet,
-    title: "Casques & Gilets",
-    tagline: "Soyez vus, soyez protégés.",
-    action: "Voir les modèles",
+    title: "Protection Cranienne & Visibilité",
+    tagline: "Casques haute résistance et gilets réfléchissants normés pour une sécurité maximale sur zone.",
+    action: "Explorer la gamme",
   },
   {
     img: safetyBoots,
-    title: "Chaussures Renforcées",
-    tagline: "Semelles anti-perforation & bouts coqués.",
-    action: "Voir les pointures",
+    title: "Chaussures de Sécurité S3",
+    tagline: "Coques en acier, semelles anti-perforation et confort ergonomique pour les longues journées.",
+    action: "Trouver ma pointure",
   },
   {
     img: safetyGloves,
-    title: "Gants & Accessoires",
-    tagline: "Mains et yeux à l'abri du danger.",
-    action: "Tout l'outillage",
+    title: "Équipements de Protection Individuelle (EPI)",
+    tagline: "Gants anti-coupure, lunettes de protection et masques. L'essentiel pour chaque corps de métier.",
+    action: "Voir tout l'outillage",
   },
 ];
 
@@ -44,10 +44,10 @@ const SafetySection = () => {
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-12">
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-3">
-            Sécurité & <span className="text-primary">Chantier</span>
+            Équipements de <span className="text-primary">Chantier & Sécurité</span>
           </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-lg mx-auto">
-            Casques, gilets, chaussures. L'équipement des bâtisseurs, aux normes internationales.
+          <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
+            Gorgorlou accompagne les bâtisseurs du Sénégal avec des équipements certifiés aux normes internationales (CE, ISO), garantissant protection et performance sur vos chantiers.
           </p>
         </div>
 

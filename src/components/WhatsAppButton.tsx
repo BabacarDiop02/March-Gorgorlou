@@ -1,7 +1,10 @@
+import { MessageCircle } from "lucide-react";
+import { BRAND_CONFIG } from "@/lib/constants";
+
 const WhatsAppButton = () => {
   return (
     <a
-      href="https://wa.me/221771234567?text=Bonjour%20Gorgorlou%20!%20Je%20souhaite%20passer%20commande."
+      href={BRAND_CONFIG.whatsappUrl("Bonjour Gorgorlou ! Je souhaite passer commande.")}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-200"

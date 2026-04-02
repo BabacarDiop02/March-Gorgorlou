@@ -12,7 +12,7 @@ Comme Netlify ne peut pas héberger votre serveur Node.js/SQLite, vous devez le 
 3. Créez un nouveau **Web Service**.
 4. Configurez-le ainsi :
    - **Root Directory** : `server`
-   - **Build Command** : `npm install && npx prisma generate --schema=prisma/schema.postgresql.prisma`
+   - **Build Command** : `npm install && npx prisma db push --schema=prisma/schema.postgresql.prisma --accept-data-loss && npm run build && npx prisma db seed --schema=prisma/schema.postgresql.prisma`
    - **Start Command** : `npm start`
 5. Ajoutez ces **Variables d'Environnement** dans Render :
    - `DATABASE_URL` : (Copiez l'URL de votre base PostgreSQL créée sur Render)

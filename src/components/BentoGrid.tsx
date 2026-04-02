@@ -1,7 +1,7 @@
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
+import api, { STORAGE_URL } from "@/services/api";
 
 const BentoGrid = () => {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const BentoGrid = () => {
               {/* Image */}
               <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
                 <img
-                  src={cat.img.startsWith('/') ? `http://localhost:5000${cat.img}` : cat.img}
+                  src={cat.img.startsWith('/') ? `${STORAGE_URL}${cat.img}` : cat.img}
                   alt={cat.title}
                   className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
                 />
@@ -92,7 +92,7 @@ const BentoGrid = () => {
             >
               <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
                 <img
-                  src={cat.img.startsWith('/') ? `http://localhost:5000${cat.img}` : cat.img}
+                  src={cat.img.startsWith('/') ? `${STORAGE_URL}${cat.img}` : cat.img}
                   alt={cat.title}
                   className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
                 />

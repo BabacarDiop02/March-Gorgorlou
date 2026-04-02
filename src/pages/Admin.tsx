@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import api, { uploadImage } from "@/services/api";
+import api, { uploadImage, STORAGE_URL } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -195,7 +195,7 @@ const DataCard = ({ data, onDelete, onUpdate, type }: any) => {
             </div>
         ) : (
             <img 
-                src={data.img.startsWith('/') ? `http://localhost:5000${data.img}` : data.img} 
+                src={data.img.startsWith('/') ? `${STORAGE_URL}${data.img}` : data.img} 
                 alt={data.title} 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
             />

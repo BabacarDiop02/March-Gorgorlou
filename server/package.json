@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
+    "prisma:generate:prod": "prisma generate --schema=prisma/schema.postgresql.prisma",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:seed": "ts-node prisma/seed.ts"
   },

@@ -1,6 +1,6 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
+import api, { STORAGE_URL } from "@/services/api";
 
 const SafetySection = () => {
   const { data: products = [], isLoading } = useQuery({
@@ -61,7 +61,7 @@ const SafetySection = () => {
               {/* Image */}
               <div className="h-56 overflow-hidden">
                 <img
-                  src={p.img.startsWith('/') ? `http://localhost:5000${p.img}` : p.img}
+                  src={p.img.startsWith('/') ? `${STORAGE_URL}${p.img}` : p.img}
                   alt={p.title}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />

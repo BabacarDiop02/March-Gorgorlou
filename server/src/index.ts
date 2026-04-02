@@ -11,11 +11,15 @@ dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 // CORS config
-app.use(cors());
+app.use(cors({
+  origin: "https://marche-gorgorlou.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static files (uploads)

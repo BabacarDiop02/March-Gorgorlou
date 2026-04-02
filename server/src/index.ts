@@ -16,8 +16,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 // CORS config
 app.use(cors({
-  origin: "https://marche-gorgorlou.netlify.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
 app.use(express.json());
@@ -160,6 +160,6 @@ app.post("/api/upload", authenticateJWT, upload.single("image"), (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });

@@ -1,43 +1,20 @@
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import catMaison from "@/assets/cat-maison.jpg";
-import catFetes from "@/assets/cat-fetes.jpg";
-import catVolaille from "@/assets/cat-volaille.jpg";
-import catMarche from "@/assets/cat-marche.jpg";
-
-const categories = [
-  {
-    title: "Mobilier Noble",
-    subtitle: "L'excellence du bois massif pour votre héritage.",
-    badge: "Prestige",
-    img: catMaison,
-    gridArea: "maison",
-  },
-  {
-    title: "Art de la Fête",
-    subtitle: "Réceptions d'exception & Art de la table.",
-    badge: "Exclusif",
-    img: catFetes,
-    gridArea: "fetes",
-  },
-  {
-    title: "Ferme Authentique",
-    subtitle: "Volailles élevées en plein air & œufs frais.",
-    badge: "Terroir",
-    img: catVolaille,
-    gridArea: "volaille",
-  },
-  {
-    title: "Fraîcheur du Jour",
-    subtitle: "Le meilleur de l'océan & du potager.",
-    badge: "Arrivage",
-    img: catMarche,
-    gridArea: "marche",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
 
 const BentoGrid = () => {
   const navigate = useNavigate();
+
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await api.get("/categories");
+      return response.data;
+    },
+  });
+
+  if (isLoading) return <div className="py-20 text-center font-heading font-bold text-2xl animate-pulse">Chargement des univers...</div>;
 
   return (
     <section id="nos-univers" className="py-20 wax-pattern">
@@ -70,7 +47,7 @@ const BentoGrid = () => {
               {/* Image */}
               <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
                 <img
-                  src={cat.img}
+                  src={cat.img.startsWith('/') ? `http://localhost:5000${cat.img}` : cat.img}
                   alt={cat.title}
                   className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
                 />
@@ -115,7 +92,7 @@ const BentoGrid = () => {
             >
               <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110">
                 <img
-                  src={cat.img}
+                  src={cat.img.startsWith('/') ? `http://localhost:5000${cat.img}` : cat.img}
                   alt={cat.title}
                   className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
                 />

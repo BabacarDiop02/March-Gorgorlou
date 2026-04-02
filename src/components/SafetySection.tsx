@@ -1,30 +1,18 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import safetyHelmet from "@/assets/safety-helmet.jpg";
-import safetyBoots from "@/assets/safety-boots.jpg";
-import safetyGloves from "@/assets/safety-gloves.jpg";
-
-const products = [
-  {
-    img: safetyHelmet,
-    title: "Protection Cranienne & Visibilité",
-    tagline: "Casques haute résistance et gilets réfléchissants normés pour une sécurité maximale sur zone.",
-    action: "Explorer la gamme",
-  },
-  {
-    img: safetyBoots,
-    title: "Chaussures de Sécurité S3",
-    tagline: "Coques en acier, semelles anti-perforation et confort ergonomique pour les longues journées.",
-    action: "Trouver ma pointure",
-  },
-  {
-    img: safetyGloves,
-    title: "Équipements de Protection Individuelle (EPI)",
-    tagline: "Gants anti-coupure, lunettes de protection et masques. L'essentiel pour chaque corps de métier.",
-    action: "Voir tout l'outillage",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
 
 const SafetySection = () => {
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const response = await api.get("/products");
+      return response.data;
+    },
+  });
+
+  if (isLoading) return null;
+
   return (
     <section className="relative py-20 bg-[hsl(220_14%_96%)] overflow-hidden">
       {/* Hazard stripe pattern */}
@@ -52,7 +40,7 @@ const SafetySection = () => {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((p, i) => (
+          {products.map((p: any, i: number) => (
             <div
               key={p.title}
               className="group relative bg-card rounded-2xl border border-border/60 overflow-hidden shadow-sm transition-shadow duration-300 hover:shadow-xl"
@@ -73,7 +61,7 @@ const SafetySection = () => {
               {/* Image */}
               <div className="h-56 overflow-hidden">
                 <img
-                  src={p.img}
+                  src={p.img.startsWith('/') ? `http://localhost:5000${p.img}` : p.img}
                   alt={p.title}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />

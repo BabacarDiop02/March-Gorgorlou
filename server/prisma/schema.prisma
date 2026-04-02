@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  title     String
+  subtitle  String
+  badge     String
+  img       String
+  gridArea  String
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  img       String
+  title     String
+  tagline   String
+  action    String
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  quartier  String
+  text      String
+  avatar    String
+  createdAt DateTime @default(now())
+}

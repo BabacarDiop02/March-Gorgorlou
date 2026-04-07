@@ -20,25 +20,25 @@ Comme Netlify ne peut pas héberger votre serveur Node.js/SQLite, vous devez le 
 
 ---
 
-## 2. Configuration de Netlify (Frontend)
+## 2. Configuration de Vercel (Frontend)
 
-Maintenant que votre serveur a une URL (ex: `https://votre-backend.onrender.com`), vous devez configurer Netlify pour l'appeler.
+Maintenant que votre serveur a une URL (ex: `https://votre-backend.onrender.com`), vous devez configurer Vercel pour l'appeler.
 
 ### Étapes :
-1. Allez dans les paramètres de votre site sur Netlify.
-2. Allez dans **Site configuration** > **Environment variables**.
+1. Allez dans les paramètres de votre projet sur [vercel.com](https://vercel.com).
+2. Allez dans **Settings** > **Environment Variables**.
 3. Ajoutez les variables suivantes :
    - `VITE_API_URL` : `https://votre-backend.onrender.com/api`
    - `VITE_STORAGE_URL` : `https://votre-backend.onrender.com`
-4. Allez dans **Deploys** et cliquez sur **Trigger deploy** > **Clear cache and deploy site**.
+4. Allez dans **Deployments** et cliquez sur **Redeploy** pour appliquer les changements.
 
 ---
 
-## 3. Pourquoi l'Admin ne fonctionnait pas sur Netlify ?
+## 3. Pourquoi l'Admin ne fonctionnait pas ?
 
-Par défaut, Netlify essaie de trouver un fichier `admin.html` quand vous tapez `/admin`. Comme c'est une application React, ce fichier n'existe pas.
+Par défaut, Vercel essaie de trouver un fichier `admin.html` quand vous tapez `/admin`. Comme c'est une application React (SPA), ce fichier n'existe pas.
 
-J'ai ajouté un fichier nommé **`public/_redirects`** qui dit à Netlify :
+Le fichier **`public/_redirects`** (Netlify) et la configuration **`vercel.json`** (Vercel) disent à la plateforme :
 > *"Pour n'importe quelle URL (/*), renvoie toujours vers `index.html` et laisse React gérer la suite."*
 
 Grâce à cela, vos liens vers `/admin` et `/login` fonctionneront désormais parfaitement en ligne.
@@ -48,6 +48,6 @@ Grâce à cela, vos liens vers `/admin` et `/login` fonctionneront désormais pa
 ## Vérification Finale
 
 Une fois ces étapes faites, vous pourrez accéder à :
-👉 `https://marche-gorgorlou.netlify.app/admin`
+👉 `https://march-gorgorlou.vercel.app/admin`
 
 Et vous connecter avec vos identifiants habituels.

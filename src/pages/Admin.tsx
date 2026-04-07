@@ -59,11 +59,14 @@ const Admin = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 text-white flex flex-col p-6 shadow-2xl">
         <div 
-          className="flex items-center gap-3 mb-10 px-2 pb-6 border-b border-white/10 cursor-pointer hover:opacity-80 transition-opacity"
+          className="flex items-center justify-center mb-10 px-2 pb-6 border-b border-white/10 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate("/")}
         >
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-black text-xl shadow-lg shadow-primary/20">G</div>
-          <span className="font-heading font-black text-xl tracking-tighter uppercase">Gorgorlou</span>
+          <img 
+            src="/images/logos/logo_marche_gorgorlou.svg" 
+            alt="Marché Gorgorlou" 
+            className="h-12 w-auto filter brightness-0 invert" 
+          />
         </div>
         
         <nav className="flex-1 space-y-2">

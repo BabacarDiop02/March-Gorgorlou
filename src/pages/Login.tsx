@@ -34,10 +34,12 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-accent/20 p-4 wax-pattern">
       <Card className="w-full max-w-md shadow-2xl border-primary/20 backdrop-blur-sm bg-white/90">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4 rotate-3 hover:rotate-0 transition-transform duration-300 shadow-lg">
-            <Lock className="text-white w-8 h-8" />
-          </div>
+        <CardHeader className="space-y-1 text-center pb-8">
+          <img 
+            src="/images/logos/logo_marche_gorgorlou.svg" 
+            alt="Marché Gorgorlou" 
+            className="mx-auto h-20 w-auto mb-6 drop-shadow-xl" 
+          />
           <CardTitle className="text-3xl font-heading font-black tracking-tighter">
             Espace <span className="text-primary">Admin</span>
           </CardTitle>

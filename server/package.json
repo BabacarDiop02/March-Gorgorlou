@@ -4,12 +4,9 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npx prisma generate --schema=prisma/schema.postgresql.prisma",
     "start": "node dist/index.js",
-    "prisma:generate": "prisma generate",
-    "prisma:generate:prod": "prisma generate --schema=prisma/schema.postgresql.prisma",
-    "prisma:migrate": "prisma migrate dev --name init",
-    "prisma:seed": "ts-node prisma/seed.ts"
+    "deploy": "npx prisma db push --schema=prisma/schema.postgresql.prisma --accept-data-loss && npx prisma db seed --schema=prisma/schema.postgresql.prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",

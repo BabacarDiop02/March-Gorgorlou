@@ -74,6 +74,8 @@ const authenticateJWT = (req: any, res: any, next: any) => {
 
 // --- Routes ---
 
+// --- Routes ---
+
 // Root
 app.get("/", (req, res) => {
   res.send("Gorgorlou API Server is running... 🚀");
@@ -96,8 +98,28 @@ app.post("/api/auth/login", async (req, res) => {
 
 // Categories (Univers)
 app.get("/api/categories", async (req, res) => {
-  const categories = await prisma.category.findMany();
+  const categories = await prisma.category.findMany({
+    include: {
+      subCategories: true,
+      items: true
+    }
+  });
   res.json(categories);
+});
+
+// Get Universe by Slug (Public)
+app.get("/api/universes/:slug", async (req, res) => {
+  const { slug } = req.params;
+  const category = await prisma.category.findUnique({
+    where: { slug },
+    include: {
+      subCategories: true,
+      items: true
+    }
+  });
+
+  if (!category) return res.status(404).json({ message: "Universe not found" });
+  res.json(category);
 });
 
 app.post("/api/categories", authenticateJWT, async (req, res) => {
@@ -117,6 +139,67 @@ app.put("/api/categories/:id", authenticateJWT, async (req, res) => {
 app.delete("/api/categories/:id", authenticateJWT, async (req, res) => {
   const { id } = req.params;
   await prisma.category.delete({ where: { id: parseInt(id) } });
+  res.sendStatus(204);
+});
+
+// --- SubCategories & Items Management ---
+
+app.post("/api/subcategories", authenticateJWT, async (req, res) => {
+  const sub = await prisma.subCategory.create({ data: req.body });
+  res.json(sub);
+});
+
+app.delete("/api/subcategories/:id", authenticateJWT, async (req, res) => {
+  await prisma.subCategory.delete({ where: { id: parseInt(req.params.id) } });
+  res.sendStatus(204);
+});
+
+app.post("/api/universe-items", authenticateJWT, async (req, res) => {
+  const item = await prisma.universeItem.create({ data: req.body });
+  res.json(item);
+});
+
+app.delete("/api/universe-items/:id", authenticateJWT, async (req, res) => {
+  await prisma.universeItem.delete({ where: { id: parseInt(req.params.id) } });
+  res.sendStatus(204);
+});
+
+// --- Orders (Commandes) ---
+
+app.get("/api/orders", authenticateJWT, async (req, res) => {
+  const orders = await prisma.order.findMany({
+    include: { items: true },
+    orderBy: { createdAt: "desc" }
+  });
+  res.json(orders);
+});
+
+app.post("/api/orders", async (req, res) => {
+  const { items, ...orderData } = req.body;
+  // items should be an array of { productName, quantity, price }
+  const order = await prisma.order.create({
+    data: {
+      ...orderData,
+      totalPrice: parseFloat(orderData.totalPrice),
+      items: {
+        create: items
+      }
+    },
+    include: { items: true }
+  });
+  res.json(order);
+});
+
+app.put("/api/orders/:id", authenticateJWT, async (req, res) => {
+  const order = await prisma.order.update({
+    where: { id: parseInt(req.params.id) },
+    data: req.body
+  });
+  res.json(order);
+});
+
+app.delete("/api/orders/:id", authenticateJWT, async (req, res) => {
+  await prisma.order.delete({ where: { id: parseInt(req.params.id) } });
   res.sendStatus(204);
 });
 

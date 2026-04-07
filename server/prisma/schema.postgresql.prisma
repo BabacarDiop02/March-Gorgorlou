@@ -14,13 +14,57 @@ model User {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  title     String
-  subtitle  String
-  badge     String
-  img       String
-  gridArea  String
-  createdAt DateTime @default(now())
+  id            Int            @id @default(autoincrement())
+  slug          String         @unique
+  title         String
+  subtitle      String
+  description   String         @default("")
+  badge         String
+  img           String
+  gridArea      String
+  subCategories SubCategory[]
+  items         UniverseItem[]
+  createdAt     DateTime       @default(now())
+}
+
+model SubCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model UniverseItem {
+  id          Int      @id @default(autoincrement())
+  name        String
+  price       String
+  image       String
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  phone           String
+  address         String
+  notes           String?
+  totalPrice      Float
+  status          String      @default("PENDING") // PENDING, CONFIRMED, DELIVERED, CANCELLED
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     Int
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productName String
+  quantity    Int
+  price       String
 }
 
 model Product {

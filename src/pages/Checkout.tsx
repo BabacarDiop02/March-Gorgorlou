@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "@/services/api";
 import { BRAND_CONFIG } from "@/lib/constants";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +13,7 @@ const Checkout = () => {
   const { cart, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [isOrdered, setIsOrdered] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [lastOrderDetails, setLastOrderDetails] = useState<any>(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -179,8 +181,9 @@ const Checkout = () => {
     doc.save(`Facture_Gorgorlou_#GK-${Date.now().toString().slice(-6)}.pdf`);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     
     // Store details for PDF
     const orderDetails = {
@@ -190,7 +193,26 @@ const Checkout = () => {
     };
     setLastOrderDetails(orderDetails);
 
-    // Construct WhatsApp message
+    // 1. Save to backend database
+    try {
+        await api.post("/orders", {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            address: formData.address,
+            notes: formData.notes,
+            totalPrice: totalPrice,
+            items: cart.map(item => ({
+                productName: item.name,
+                quantity: item.quantity,
+                price: item.price
+            }))
+        });
+    } catch (err) {
+        console.error("Erreur de sauvegarde backoffice:", err);
+    }
+
+    // 2. Construct WhatsApp message
     const merchantPhone = BRAND_CONFIG.phone;
     const itemsList = cart.map(item => `   ▫️ *${item.name}*\n       └─ Qte: ${item.quantity} | ${item.price}`).join("\n\n");
     const divider = "──────────────────";
@@ -214,6 +236,7 @@ const Checkout = () => {
     window.open(whatsappUrl, "_blank");
     
     setIsOrdered(true);
+    setLoading(false);
     setTimeout(() => {
         clearCart();
     }, 2000);
@@ -305,8 +328,8 @@ const Checkout = () => {
               </div>
 
               <div className="pt-4">
-                <Button type="submit" className="w-full rounded-2xl py-8 text-xl font-black shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all hover:-translate-y-1">
-                  Confirmer ma commande
+                <Button type="submit" disabled={loading} className="w-full rounded-2xl py-8 text-xl font-black shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all hover:-translate-y-1">
+                  {loading ? "Traitement..." : "Confirmer ma commande"}
                 </Button>
                 <p className="text-center mt-6 text-xs text-muted-foreground flex items-center justify-center gap-2">
                   <ShieldCheck size={14} className="text-green-500" />

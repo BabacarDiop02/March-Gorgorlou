@@ -1,5 +1,4 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { universDetails } from "@/lib/universData";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -9,17 +8,43 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { BRAND_CONFIG } from "@/lib/constants";
 import { toast } from "sonner";
+import api, { STORAGE_URL } from "@/services/api";
 
 const UniversDetail = () => {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
-    const data = slug ? universDetails[slug] : null;
+    const [data, setData] = useState<any>(null);
+    const [allCategories, setAllCategories] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
     const { addToCart } = useCart();
 
     useEffect(() => {
+        const fetchUniverse = async () => {
+            if (!slug) return;
+            setLoading(true);
+            try {
+                // Fetch current universe
+                const univRes = await api.get(`/universes/${slug}`);
+                setData(univRes.data);
+                
+                // Fetch all categories for "Other Universes" section
+                const allRes = await api.get("/categories");
+                setAllCategories(allRes.data);
+                
+                setError(false);
+            } catch (err) {
+                console.error("Error fetching universe:", err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUniverse();
         window.scrollTo(0, 0);
         setSelectedIndex(0);
     }, [slug]);
@@ -29,7 +54,16 @@ const UniversDetail = () => {
         window.open(BRAND_CONFIG.whatsappUrl(text), "_blank");
     };
 
-    if (!data) {
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
+                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-muted-foreground font-heading font-bold">Chargement de votre univers...</p>
+            </div>
+        );
+    }
+
+    if (error || !data) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4">
                 <h1 className="text-2xl font-bold mb-4">Univers non trouvé</h1>
@@ -38,7 +72,8 @@ const UniversDetail = () => {
         );
     }
 
-    const subcategories = data.subcategories;
+    const subcategories = data.subCategories || [];
+    const featuredProducts = data.items || [];
     const current = subcategories[selectedIndex];
     const total = subcategories.length;
 
@@ -66,7 +101,7 @@ const UniversDetail = () => {
             <section className="relative min-h-[600px] lg:min-h-[80vh] flex items-center overflow-hidden py-20">
                 <div className="absolute inset-0 z-0">
                     <img
-                        src={data.img}
+                        src={data.img.startsWith("/") ? `${STORAGE_URL}${data.img}` : data.img}
                         alt={data.title}
                         className="w-full h-full object-cover"
                     />
@@ -118,7 +153,7 @@ const UniversDetail = () => {
 
                             {/* Subcategory list */}
                             <div className="space-y-3">
-                                {subcategories.map((sub, index) => (
+                                {subcategories.map((sub: any, index: number) => (
                                     <div
                                         key={index}
                                         onClick={() => handleSelect(index)}
@@ -151,7 +186,7 @@ const UniversDetail = () => {
                                 <div className="relative h-72 lg:h-80 overflow-hidden">
                                     <img
                                         key={selectedIndex}
-                                        src={current.image}
+                                        src={current.image.startsWith("/") ? `${STORAGE_URL}${current.image}` : current.image}
                                         alt={current.name}
                                         className={`w-full h-full object-cover transition-all duration-300 ${slideDir === "right"
                                                 ? "translate-x-8 opacity-0"
@@ -240,11 +275,11 @@ const UniversDetail = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {data.featuredProducts.map((product, index) => (
+                        {featuredProducts.map((product: any, index: number) => (
                             <div key={product.id} className={`group bg-white dark:bg-zinc-950 rounded-[2.5rem] overflow-hidden shadow-sm hover-card-premium animate-fade-in-up stagger-${(index % 3) + 1} border border-zinc-100 dark:border-zinc-800`}>
                                 <div className="h-64 overflow-hidden relative">
                                     <img
-                                        src={product.image}
+                                        src={product.image.startsWith("/") ? `${STORAGE_URL}${product.image}` : product.image}
                                         alt={product.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
@@ -303,17 +338,17 @@ const UniversDetail = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {Object.entries(universDetails)
-                            .filter(([key]) => key !== slug)
+                        {allCategories
+                            .filter((item) => item.slug !== slug)
                             .slice(0, 3)
-                            .map(([key, item]) => (
+                            .map((item) => (
                                 <Link
-                                    key={key}
-                                    to={`/univers/${key}`}
+                                    key={item.slug}
+                                    to={`/univers/${item.slug}`}
                                     className="group relative h-80 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
                                 >
                                     <img
-                                        src={item.img}
+                                        src={item.img.startsWith("/") ? `${STORAGE_URL}${item.img}` : item.img}
                                         alt={item.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                                     />

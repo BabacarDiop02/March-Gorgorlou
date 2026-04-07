@@ -17,19 +17,23 @@ const Admin = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("categories");
 
   // Fetch data
   const fetchData = async () => {
     try {
-      const [cats, prods, tests] = await Promise.all([
+      const [cats, prods, tests, ords] = await Promise.all([
         api.get("/categories"),
         api.get("/products"),
         api.get("/testimonials"),
+        api.get("/orders"),
       ]);
       setCategories(cats.data);
       setProducts(prods.data);
       setTestimonials(tests.data);
+      setOrders(ords.data);
     } catch (e) {
       toast.error("Erreur lors du chargement des données.");
     }
@@ -43,7 +47,7 @@ const Admin = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleDelete = async (type: "categories" | "products" | "testimonials", id: number) => {
+  const handleDelete = async (type: "categories" | "products" | "testimonials" | "orders", id: number) => {
     if (!confirm("Voulez-vous vraiment supprimer cet élément ?")) return;
     try {
       await api.delete(`/${type}/${id}`);
@@ -51,6 +55,16 @@ const Admin = () => {
       fetchData();
     } catch (e) {
       toast.error("Échec de la suppression.");
+    }
+  };
+
+  const handleUpdateOrderStatus = async (id: number, status: string) => {
+    try {
+      await api.put(`/orders/${id}`, { status });
+      toast.success("Statut mis à jour.");
+      fetchData();
+    } catch (e) {
+      toast.error("Erreur lors de la mise à jour.");
     }
   };
 
@@ -72,16 +86,16 @@ const Admin = () => {
         <nav className="flex-1 space-y-2">
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-3 text-white/70 hover:text-white hover:bg-white/10 h-12 rounded-xl"
-            onClick={() => navigate("/admin")}
+            className={`w-full justify-start gap-3 h-12 rounded-xl transition-all ${activeTab !== "orders" ? "text-white bg-white/10 shadow-lg" : "text-white/70 hover:text-white hover:bg-white/10"}`}
+            onClick={() => setActiveTab("categories")}
           >
             <LayoutDashboard className="w-5 h-5" />
-            Dashboard
+            Catalogue
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-3 text-white/70 hover:text-white hover:bg-white/10 h-12 rounded-xl"
-            onClick={() => toast.info("Section Ventes - Prochainement disponible.")}
+            className={`w-full justify-start gap-3 h-12 rounded-xl transition-all ${activeTab === "orders" ? "text-white bg-white/10 shadow-lg" : "text-white/70 hover:text-white hover:bg-white/10"}`}
+            onClick={() => setActiveTab("orders")}
           >
             <ShoppingBag className="w-5 h-5" />
             Ventes
@@ -121,16 +135,19 @@ const Admin = () => {
           </div>
         </header>
 
-        <Tabs defaultValue="categories" className="space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="bg-white p-1 rounded-2xl shadow-sm border border-slate-200">
             <TabsTrigger value="categories" className="rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg h-10 transition-all">
-              Catégories
+              Univers
             </TabsTrigger>
             <TabsTrigger value="products" className="rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg h-10 transition-all">
-              Produits
+              Sécurité (Cards)
             </TabsTrigger>
             <TabsTrigger value="testimonials" className="rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg h-10 transition-all">
               Témoignages
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg h-10 transition-all">
+              Commandes
             </TabsTrigger>
           </TabsList>
 
@@ -178,6 +195,84 @@ const Admin = () => {
               <AddButton onClick={() => {}} type="testimonials" onAdded={fetchData} />
             </div>
           </TabsContent>
+
+          <TabsContent value="orders">
+            <Card className="rounded-[2.5rem] border-none shadow-xl overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-slate-50">
+                <CardTitle className="font-heading font-black text-2xl">Dernières Commandes</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-body">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
+                        <th className="px-8 py-4">Client</th>
+                        <th className="px-8 py-4">Contact & Adresse</th>
+                        <th className="px-8 py-4">Articles</th>
+                        <th className="px-8 py-4">Total</th>
+                        <th className="px-8 py-4">Statut</th>
+                        <th className="px-8 py-4">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {orders.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-8 py-12 text-center text-slate-400 italic">Aucune commande pour le moment.</td>
+                        </tr>
+                      ) : (
+                        orders.map((order) => (
+                          <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="px-8 py-6">
+                              <p className="font-black text-slate-900">{order.firstName} {order.lastName}</p>
+                              <p className="text-xs text-slate-400">#{order.id.toString().padStart(4, '0')}</p>
+                            </td>
+                            <td className="px-8 py-6">
+                              <p className="font-bold text-sm text-slate-700">{order.phone}</p>
+                              <p className="text-xs text-slate-500 line-clamp-1">{order.address}</p>
+                            </td>
+                            <td className="px-8 py-6">
+                              <div className="flex flex-col gap-1">
+                                {order.items.map((item: any, i: number) => (
+                                  <span key={i} className="text-xs font-medium bg-slate-100 px-2 py-0.5 rounded-full inline-block">
+                                    {item.quantity}x {item.productName}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-8 py-6">
+                              <span className="font-black text-primary">{order.totalPrice.toLocaleString()} FCFA</span>
+                            </td>
+                            <td className="px-8 py-6">
+                              <select 
+                                value={order.status} 
+                                onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                                className={`text-xs font-black px-3 py-1.5 rounded-xl border-none shadow-sm outline-none cursor-pointer ${
+                                  order.status === "PENDING" ? "bg-orange-100 text-orange-600" :
+                                  order.status === "CONFIRMED" ? "bg-blue-100 text-blue-600" :
+                                  order.status === "DELIVERED" ? "bg-green-100 text-green-600" :
+                                  "bg-slate-100 text-slate-600"
+                                }`}
+                              >
+                                <option value="PENDING">EN ATTENTE</option>
+                                <option value="CONFIRMED">CONFIRMÉ</option>
+                                <option value="DELIVERED">LIVRÉ</option>
+                                <option value="CANCELLED">ANNULÉ</option>
+                              </select>
+                            </td>
+                            <td className="px-8 py-6">
+                              <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl" onClick={() => handleDelete("orders", order.id)}>
+                                <Trash2 size={18} />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
     </div>
@@ -208,7 +303,7 @@ const DataCard = ({ data, onDelete, onUpdate, type }: any) => {
                 <DialogTrigger asChild>
                     <Button variant="secondary" size="icon" className="w-10 h-10 rounded-xl shadow-lg"><Pencil className="w-5 h-5" /></Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-xl rounded-3xl p-8">
+                <DialogContent className="max-w-xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-heading font-black pb-4 border-b">Modifier {type === "testimonials" ? "le témoignage" : "l'élément"}</DialogTitle>
                     </DialogHeader>
@@ -229,6 +324,9 @@ const DataCard = ({ data, onDelete, onUpdate, type }: any) => {
         <p className="text-slate-500 font-body text-sm line-clamp-2">
             {type === "testimonials" ? data.text : (data.subtitle || data.tagline)}
         </p>
+        {type === "categories" && (
+            <p className="text-[10px] font-black uppercase text-primary mt-2">Slug: <span className="text-slate-400">{data.slug}</span></p>
+        )}
         {type === "testimonials" && (
             <p className="text-xs font-bold text-primary mt-2 uppercase tracking-wider">{data.quartier}</p>
         )}
@@ -246,10 +344,10 @@ const AddButton = ({ onAdded, type }: any) => {
                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-md group-hover:bg-primary group-hover:text-white transition-all">
                         <Plus className="w-8 h-8" />
                     </div>
-                    <span className="font-heading font-bold text-slate-500">Ajouter un nouvel élément</span>
+                    <span className="font-heading font-bold text-slate-500">Ajouter un univers</span>
                 </button>
             </DialogTrigger>
-            <DialogContent className="max-w-xl rounded-3xl p-8">
+            <DialogContent className="max-w-xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-heading font-black pb-4 border-b">Nouvel élément</DialogTitle>
                 </DialogHeader>
@@ -261,7 +359,7 @@ const AddButton = ({ onAdded, type }: any) => {
 
 const ItemForm = ({ initialData, type, onSuccess }: any) => {
     const [formData, setFormData] = useState(initialData || (type === "categories" ? {
-        title: "", subtitle: "", badge: "", img: "", gridArea: ""
+        title: "", subtitle: "", slug: "", description: "", badge: "", img: "", gridArea: "", subCategories: [], items: []
     } : type === "products" ? {
         title: "", tagline: "", action: "", img: ""
     } : {
@@ -270,11 +368,53 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 
+    // Sub-elements management
+    const [newSub, setNewSub] = useState({ name: "", description: "", image: "" });
+    const [newItem, setNewItem] = useState({ name: "", price: "", image: "" });
+
+    const handleAddSub = async () => {
+        if (!initialData) return toast.error("Veuillez d'abord enregistrer la catégorie.");
+        try {
+            await api.post("/subcategories", { ...newSub, categoryId: initialData.id });
+            toast.success("Sous-catégorie ajoutée.");
+            setNewSub({ name: "", description: "", image: "" });
+            onSuccess(); // Refresh parent
+        } catch (e) { toast.error("Erreur lors de l'ajout."); }
+    };
+
+    const handleAddItem = async () => {
+        if (!initialData) return toast.error("Veuillez d'abord enregistrer la catégorie.");
+        try {
+            await api.post("/universe-items", { ...newItem, categoryId: initialData.id });
+            toast.success("Produit ajouté.");
+            setNewItem({ name: "", price: "", image: "" });
+            onSuccess(); // Refresh parent
+        } catch (e) { toast.error("Erreur lors de l'ajout."); }
+    };
+
+    const handleDeleteSub = async (id: number) => {
+        try {
+            await api.delete(`/subcategories/${id}`);
+            onSuccess();
+        } catch (e) { toast.error("Erreur suppression."); }
+    };
+
+    const handleDeleteItem = async (id: number) => {
+        try {
+            await api.delete(`/universe-items/${id}`);
+            onSuccess();
+        } catch (e) { toast.error("Erreur suppression."); }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
             let finalData = { ...formData };
+            // Remove nested objects before saving to avoid prisma errors
+            delete finalData.subCategories;
+            delete finalData.items;
+
             if (file && type !== "testimonials") {
                 const imgUrl = await uploadImage(file);
                 finalData.img = imgUrl;
@@ -299,11 +439,11 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
             <div className="grid grid-cols-2 gap-4">
                 {type === "testimonials" ? (
                     <>
-                        <div className="space-y-2">
+                        <div className="space-y-2 col-span-2">
                             <Label>Nom</Label>
                             <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="h-12 rounded-xl" />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 col-span-2">
                             <Label>Quartier</Label>
                             <Input value={formData.quartier} onChange={e => setFormData({...formData, quartier: e.target.value})} required className="h-12 rounded-xl" />
                         </div>
@@ -322,12 +462,22 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
                             <Label>Titre</Label>
                             <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required className="h-12 rounded-xl" />
                         </div>
+                        {type === "categories" && (
+                            <div className="space-y-2 col-span-2">
+                                <Label>Slug (identifiant URL unique)</Label>
+                                <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} placeholder="ex: maison" required className="h-12 rounded-xl" />
+                            </div>
+                        )}
                         <div className="space-y-2 col-span-2">
                             <Label>{type === "categories" ? "Sous-titre" : "Tagline"}</Label>
                             <Input value={formData.subtitle || formData.tagline} onChange={e => setFormData({...formData, [type === "categories" ? 'subtitle' : 'tagline']: e.target.value})} required className="h-12 rounded-xl" />
                         </div>
                         {type === "categories" && (
                             <>
+                                <div className="space-y-2 col-span-2">
+                                    <Label>Description détaillée</Label>
+                                    <Input value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="h-12 rounded-xl" />
+                                </div>
                                 <div className="space-y-2">
                                     <Label>Badge</Label>
                                     <Input value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} required className="h-12 rounded-xl" />
@@ -335,6 +485,58 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
                                 <div className="space-y-2">
                                     <Label>Zone Grille</Label>
                                     <Input value={formData.gridArea} onChange={e => setFormData({...formData, gridArea: e.target.value})} required className="h-12 rounded-xl" />
+                                </div>
+                                
+                                {/* Dynamic Content Lists */}
+                                <div className="col-span-2 pt-6 border-t border-slate-100">
+                                    <h4 className="font-heading font-bold text-slate-900 mb-4">Sous-catégories & Produits</h4>
+                                    
+                                    {/* Subcategories List */}
+                                    <div className="space-y-4 mb-6">
+                                        <Label className="text-primary uppercase tracking-tighter text-[10px] font-black">Liste des Sous-catégories</Label>
+                                        <div className="space-y-2">
+                                            {formData.subCategories?.map((sub: any) => (
+                                                <div key={sub.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-white overflow-hidden border border-slate-200">
+                                                            <img src={sub.image.startsWith('/') ? `${STORAGE_URL}${sub.image}` : sub.image} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <span className="text-sm font-bold">{sub.name}</span>
+                                                    </div>
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteSub(sub.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                </div>
+                                            ))}
+                                            <div className="flex gap-2 items-center bg-white p-2 rounded-xl border border-dashed border-slate-300">
+                                                <Input placeholder="Nom" value={newSub.name} onChange={e => setNewSub({...newSub, name: e.target.value})} className="h-8 text-xs" />
+                                                <Input placeholder="Image URL / Path" value={newSub.image} onChange={e => setNewSub({...newSub, image: e.target.value})} className="h-8 text-xs" />
+                                                <Button type="button" size="sm" onClick={handleAddSub} className="h-8 px-3 rounded-lg"><Plus size={14} /></Button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Items List */}
+                                    <div className="space-y-4">
+                                        <Label className="text-primary uppercase tracking-tighter text-[10px] font-black">Produits de l'Univers</Label>
+                                        <div className="space-y-2">
+                                            {formData.items?.map((item: any) => (
+                                                <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-white overflow-hidden border border-slate-200">
+                                                            <img src={item.image.startsWith('/') ? `${STORAGE_URL}${item.image}` : item.image} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <span className="text-sm font-bold">{item.name} ({item.price})</span>
+                                                    </div>
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                </div>
+                                            ))}
+                                            <div className="flex gap-2 items-center bg-white p-2 rounded-xl border border-dashed border-slate-300">
+                                                <Input placeholder="Nom produit" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} className="h-8 text-xs" />
+                                                <Input placeholder="Prix (ex: 5 000 FCFA)" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} className="h-8 text-xs" />
+                                                <Input placeholder="Image URL" value={newItem.image} onChange={e => setNewItem({...newItem, image: e.target.value})} className="h-8 text-xs" />
+                                                <Button type="button" size="sm" onClick={handleAddItem} className="h-8 px-3 rounded-lg"><Plus size={14} /></Button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </>
                         )}
@@ -345,7 +547,7 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
                             </div>
                         )}
                         <div className="space-y-2 col-span-2">
-                            <Label>Image</Label>
+                            <Label>Image principale</Label>
                             <div className="flex gap-4 items-center">
                                 <div className="flex-1 h-12 rounded-xl border border-input px-3 py-2 text-sm text-muted-foreground flex items-center overflow-hidden">
                                     {file ? file.name : (formData.img || "Aucune image sélectionnée")}

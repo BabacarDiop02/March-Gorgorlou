@@ -10,7 +10,10 @@ import multer from "multer";
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 // Supabase Config

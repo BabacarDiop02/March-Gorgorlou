@@ -10,26 +10,47 @@ import { Eye, EyeOff, ChevronRight } from "lucide-react";
 
 const Login = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const BRAND_ORANGE = "#f97316";
   const BRAND_NAVY = "#0f172a";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post("/auth/login", { username, password });
+      const response = await api.post("/auth/login", { email, password });
       login(response.data.token, response.data.user);
-      toast.success("Connexion réussie !");
-      navigate("/admin");
+      toast.success("Bienvenue sur Gorgorlou !");
+      navigate("/");
     } catch (error: any) {
-      toast.error("Identifiants invalides ou erreur serveur.");
+      toast.error(error.message || "Identifiants invalides");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // Appel API pour l'inscription via Supabase
+      const res = await api.post("/auth/signup", { 
+        email, 
+        password, 
+        fullName, 
+        phone 
+      });
+      toast.success("Compte créé avec succès ! Connectez-vous.");
+      setIsRightPanelActive(false); // Basculer vers la connexion
+    } catch (error: any) {
+      toast.error(error.message || "Erreur lors de l'inscription");
     } finally {
       setLoading(false);
     }
@@ -222,59 +243,81 @@ const Login = () => {
               produits et aux ventes pour les administrateurs et les clients au Sénégal. 
               Gérez efficacement vos univers, vos rayons et vos stocks en toute simplicité.
             </p>
-            <Button 
-                variant="ghost" 
-                className="mt-6 border-slate-200 text-slate-400 rounded-full hover:text-orange-500 hover:border-orange-500"
-                onClick={() => setIsRightPanelActive(false)}
-            >
-                Retour à la connexion
-            </Button>
           </div>
         </div>
 
-        {/* Sign In Panel */}
-        <div className="form-container sign-in-container">
-          <form onSubmit={handleSubmit} className="form-content">
-            <h1 className="text-2xl font-bold mb-8 text-[#0f172a]">Connexion</h1>
-            
-            <div className="w-full space-y-4">
-                <div className="text-left">
-                    <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Identifiant</Label>
-                    <input 
-                        type="text" 
-                        placeholder="Login" 
-                        className="login-input"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-
-                <div className="text-left relative">
-                    <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Mot de passe</Label>
-                    <div className="relative">
-                        <input 
-                            type={showPassword ? "text" : "password"} 
-                            placeholder="Mot de passe" 
-                            className="login-input pr-10"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <button 
-                            type="button" 
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3.5 text-slate-400 hover:text-orange-500 transition-colors"
-                        >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
-                    <div className="text-right mt-1">
-                        <a href="#" className="text-[10px] text-slate-400 hover:text-[#f97316] transition-colors font-bold uppercase tracking-widest">Mot de passe oublié ?</a>
-                    </div>
-                </div>
+      <div className={`container-login absolute top-[47%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
+        {/* Sign Up Panel (Left side when active) */}
+        <div className="form-container sign-up-container">
+          <form onSubmit={handleSignUp} className="form-content bg-white p-12 flex flex-col items-center justify-center text-center h-full">
+            <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter">Créer un compte</h1>
+            <div className="w-full space-y-3">
+              <input 
+                type="text" 
+                placeholder="Nom complet" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                required
+              />
+              <input 
+                type="email" 
+                placeholder="Email" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+              <input 
+                type="tel" 
+                placeholder="Téléphone" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Mot de passe" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
             </div>
+            <button 
+                type="submit" 
+                className="mt-6 bg-[#f97316] hover:bg-[#ea580c] text-white py-2.5 px-10 rounded font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20 transition-all text-xs"
+                disabled={loading}
+            >
+                {loading ? "Création..." : "S'inscrire"}
+            </button>
+          </form>
+        </div>
 
+        {/* Sign In Panel (Right side by default) */}
+        <div className="form-container sign-in-container">
+          <form onSubmit={handleLogin} className="form-content bg-white p-12 flex flex-col items-center justify-center text-center h-full">
+            <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter">Connexion</h1>
+            <div className="w-full space-y-3">
+              <input 
+                type="email" 
+                placeholder="Email" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Mot de passe" 
+                className="bg-[#eee] border-none p-3 w-full outline-none rounded" 
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <a href="#" className="text-xs text-[#333] mt-4 hover:underline">Mot de passe oublié ?</a>
             <button 
                 type="submit" 
                 className="mt-6 bg-[#f97316] hover:bg-[#ea580c] text-white py-2.5 px-10 rounded font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20 transition-all text-xs"
@@ -284,6 +327,7 @@ const Login = () => {
             </button>
           </form>
         </div>
+      </div>
 
         {/* Overlay Panel */}
         <div className="overlay-container">

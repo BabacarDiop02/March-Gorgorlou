@@ -25,6 +25,7 @@ import api from "@/services/api";
 const Index = () => {
   const [flashProducts, setFlashProducts] = useState<any[]>([]);
   const [bestOffers, setBestOffers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 12, m: 45, s: 0 });
 
   useEffect(() => {
@@ -46,21 +47,19 @@ const Index = () => {
 
   const fetchHomeData = async () => {
     try {
-      // Pour l'instant, on simule avec des données statiques si l'API n'est pas prête
-      // Mais on garde la structure pour le futur
-      setFlashProducts([
-        { id: 1, name: "Téléviseur Smart LED 55'", price: 295000, oldPrice: 450000, discount: 34, img: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500&auto=format", badge: "OFFICIEL", stock: 5 },
-        { id: 2, name: "T-shirt Premium Coton", price: 7500, oldPrice: 12000, discount: 38, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format", badge: "HOT", stock: 12 },
-        { id: 3, name: "Sac à dos Urban Black", price: 15000, oldPrice: 22000, discount: 32, img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format", badge: "TOP", stock: 3 },
-      ]);
+      setLoading(true);
+      // Récupérer les produits pour les ventes flash
+      const flashRes = await api.get("/products?is_flash_sale=eq.true");
+      setFlashProducts(flashRes.data);
 
-      setBestOffers([
-        { id: 4, name: "Friteuse Air Fryer 8L", price: 45000, discount: 36, img: "https://images.unsplash.com/photo-1585121234028-06b8c8d45369?w=500&auto=format", badge: "PROMO" },
-        { id: 5, name: "Bouilloire Électrique Inox", price: 8500, discount: 29, img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&auto=format", badge: "BEST" },
-        { id: 6, name: "Aspirateur Sans Fil 3-en-1", price: 89000, discount: 34, img: "https://images.unsplash.com/photo-1558317374-067df5f15430?w=500&auto=format", badge: "HOT" },
-      ]);
+      // Récupérer les meilleures offres (ex: avec badge PROMO)
+      const offersRes = await api.get("/products?badge=eq.PROMO&limit=6");
+      setBestOffers(offersRes.data);
+      
+      setLoading(false);
     } catch (e) {
-      console.error(e);
+      console.error("Erreur lors du chargement des produits:", e);
+      setLoading(false);
     }
   };
 
@@ -162,7 +161,7 @@ const Index = () => {
             </div>
             
             <div className="p-6 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4 bg-white">
-              {flashProducts.map(p => (
+              {Array.isArray(flashProducts) && flashProducts.map(p => (
                 <div key={p.id} className="group cursor-pointer">
                   <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-slate-50 border border-slate-100">
                     <img src={p.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -219,7 +218,7 @@ const Index = () => {
              <Button variant="ghost" className="text-white hover:bg-white/10 font-bold flex items-center gap-2">Voir plus <ChevronRight size={18} /></Button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-            {bestOffers.map(p => (
+            {Array.isArray(bestOffers) && bestOffers.map(p => (
               <div key={p.id} className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all group scale-up-center">
                 <div className="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50">
                   <img src={p.img} className="w-full h-full object-cover" />

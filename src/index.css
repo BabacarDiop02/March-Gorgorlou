@@ -1,15 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;800&display=swap');
 
-/* --- LOGIN DOUBLE SLIDER STYLES --- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- VOTRE MODÈLE DE LOGIN (ADAPTÉ GORGORLOU) --- */
+
+* {
+  box-sizing: border-box;
+}
+
+.login-page-body {
+  background: #f6f5f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Montserrat', sans-serif;
+  height: 100vh;
+  margin: 0;
+}
+
 .container-login {
   background-color: #fff;
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  position: absolute;
+  position: absolute; /* Centrage précis selon votre modèle */
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   overflow: hidden;
-  width: 768px;
-  max-width: 100%;
-  min-height: 480px;
+  width: 728px;
+  max-width: 90%;
+  min-height: 490px;
   transition: all 0.6s ease-in-out;
 }
 
@@ -65,7 +88,7 @@
 }
 
 .overlay {
-  background: #0f172a;
+  background: #0f172a; /* Navy Gorgorlou */
   background: linear-gradient(to right, #1e293b, #0f172a);
   background-repeat: no-repeat;
   background-size: cover;
@@ -115,202 +138,93 @@
   transform: translateX(20%);
 }
 
+.container-login form {
+  background-color: #0f172a; /* Navy pour le formulaire de login */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  text-align: center;
+}
+
+.container-login .form-description {
+  background-color: #ffffff !important;
+  color: #333;
+}
+
+.container-login input {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin: 8px 0;
+  width: 100%;
+  outline: none;
+}
+
+.container-login button {
+  border-radius: 5px;
+  border: 1px solid #f97316;
+  background-color: #f97316;
+  color: #FFFFFF;
+  font-size: 12px;
+  width: 100%;
+  font-weight: bold;
+  padding: 12px 35px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
+  cursor: pointer;
+}
+
+.container-login button:active {
+  transform: scale(0.95);
+}
+
+.container-login button.ghost {
+  background-color: transparent;
+  border-color: #FFFFFF;
+}
+
+/* Responsive mobile */
+@media only screen and (max-width: 767px) {
+  .sign-in-container {
+    width: 100%;
+    z-index: 2;
+  }
+  .overlay-container {
+    display: none;
+  }
+  .container-login {
+     width: 100%;
+     max-width: 100%;
+     border-radius: 0;
+  }
+}
+
 @layer base {
   :root {
-    /* Marché Gorgorlou — "L'Ordre dans le Chaos Coloré" */
-    --background: 48 100% 96%; /* Blanc cassé crème */
-    --foreground: 20 45% 20%; /* Brun terreux */
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 20 45% 20%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 45% 20%;
-
-    --primary: 25 95% 53%; /* Orange Vif #F97316 */
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 142 71% 45%; /* Vert Frais #22C55E */
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 40 33% 92%;
-    --muted-foreground: 20 15% 46%;
-
-    --accent: 48 96% 53%; /* Jaune Soleil #FACC15 */
-    --accent-foreground: 20 45% 20%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 30 20% 88%;
-    --input: 30 20% 88%;
-    --ring: 25 95% 53%;
-
-    --radius: 0.75rem;
-
-    /* Custom tokens */
-    --earth: 20 45% 20%; /* Brun terreux #4B2E1E */
-    --earth-light: 30 30% 94%;
-    --orange-glow: 25 95% 53%;
-    --green-fresh: 142 71% 45%;
-    --yellow-sun: 48 96% 53%;
-    --warm-bg: 33 100% 97%; /* #FFF7ED */
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 20 30% 8%;
-    --foreground: 40 30% 92%;
-    --card: 20 30% 10%;
-    --card-foreground: 40 30% 92%;
-    --popover: 20 30% 10%;
-    --popover-foreground: 40 30% 92%;
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 142 71% 45%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 20 20% 18%;
-    --muted-foreground: 30 15% 60%;
-    --accent: 48 96% 53%;
-    --accent-foreground: 20 45% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 20 20% 18%;
-    --input: 20 20% 18%;
-    --ring: 25 95% 53%;
-    --earth: 30 20% 85%;
-    --earth-light: 20 20% 15%;
-    --warm-bg: 20 30% 12%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-body antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
-  }
-}
-
-@layer components {
-  .glass-header {
-    @apply bg-white/80 backdrop-blur-md border-b border-border/50 shadow-sm sticky top-0 z-50;
-  }
-
-  .glass-card {
-    @apply bg-white/40 backdrop-blur-xl border border-white/40 shadow-xl;
-  }
-
-  .wax-pattern {
-    @apply relative;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23F97316' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  .radiant-bg {
-    background: radial-gradient(circle at 10% 20%, rgba(255, 145, 0, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 40%);
-    @apply relative overflow-hidden;
-  }
-  .radiant-bg::before {
-    content: '';
-    @apply absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/20 blur-[120px] rounded-full -z-10 animate-pulse;
-  }
-  .radiant-bg::after {
-    content: '';
-    @apply absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] bg-secondary/15 blur-[100px] rounded-full -z-10;
-  }
-
-  .section-fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .section-fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .stagger-1 { animation-delay: 100ms; }
-  .stagger-2 { animation-delay: 200ms; }
-  .stagger-3 { animation-delay: 300ms; }
-  .stagger-4 { animation-delay: 400ms; }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  }
-
-  .btn-gorgorlou {
-    @apply bg-primary hover:bg-primary/90 text-white font-heading font-black px-8 py-4 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-2;
-  }
-
-  .btn-whatsapp {
-    @apply bg-[#25D366] hover:bg-[#20ba5a] text-white font-heading font-black px-8 py-4 rounded-2xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:-translate-y-1 active:scale-95 transition-all;
-  }
-
-  .bento-card {
-    @apply relative overflow-hidden rounded-3xl cursor-pointer shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-2;
-  }
-  .bento-card img {
-    @apply w-full h-full object-cover transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .bento-card:hover img {
-    @apply scale-110;
-  }
-  .bento-card::after {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500;
-  }
-
-  .value-card {
-    @apply bg-white/60 backdrop-blur-md rounded-[2rem] p-8 text-center transition-all duration-500 border border-white/60;
-    box-shadow: 0 4px 30px -4px hsl(var(--earth) / 0.05);
-  }
-  .value-card:hover {
-    @apply -translate-y-2 border-primary/20 bg-white/80;
-    box-shadow: 0 20px 50px -15px hsl(var(--primary) / 0.15);
-  }
-
-  .testimonial-card {
-    @apply bg-white/70 backdrop-blur-md rounded-[2rem] p-8 border border-white/60 shadow-xl transition-all duration-500 hover:scale-[1.02];
-  }
-
-  .footer-section {
-    background-color: hsl(var(--earth));
-    color: hsl(48 100% 96%);
-    @apply relative overflow-hidden;
-  }
-  .footer-section::before {
-    content: '';
-    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-20;
-  }
-}
-
-@keyframes sectionFadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
   }
 }

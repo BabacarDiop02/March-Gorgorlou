@@ -374,6 +374,15 @@ const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
     });
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(initialData?.img ? (initialData.img.startsWith('/') ? `${STORAGE_URL}${initialData.img}` : initialData.img) : null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -441,15 +450,60 @@ const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
                     />
                 </div>
 
-                {!['testimonials', 'users'].includes(type) && (
-                  <div className="col-span-2 space-y-4">
-                      <Label className="text-xs font-bold uppercase tracking-wider">Média / Image</Label>
-                      <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-orange-500 transition-all" onClick={() => document.getElementById('img-upload')?.click()}>
-                          <Upload size={24} className="text-slate-300" />
-                          <p className="text-xs font-bold text-slate-500">Téléverser un nouveau fichier</p>
-                          <input id="img-upload" type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-                      </div>
-                  </div>
+                {!['testimonials', 'users', 'orders'].includes(type) && (
+                  <>
+                    <div className="col-span-2 space-y-4">
+                        <Label className="text-xs font-bold uppercase tracking-wider">Média / Image</Label>
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-orange-500 transition-all relative overflow-hidden min-h-[200px]" onClick={() => document.getElementById('img-upload')?.click()}>
+                            {preview ? (
+                                <img src={preview} alt="Preview" className="w-full h-full absolute inset-0 object-contain bg-white" />
+                            ) : (
+                                <>
+                                  <Upload size={24} className="text-slate-300" />
+                                  <p className="text-xs font-bold text-slate-500">Téléverser un nouveau fichier</p>
+                                </>
+                            )}
+                            <input id="img-upload" type="file" className="hidden" onChange={handleFileChange} />
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-orange-50 p-4 rounded-xl border border-orange-100">
+                        <input 
+                            type="checkbox" 
+                            id="is_flash_sale"
+                            checked={formData.is_flash_sale} 
+                            onChange={e => setFormData({...formData, is_flash_sale: e.target.checked})} 
+                            className="w-5 h-5 accent-[#F97316]"
+                        />
+                        <Label htmlFor="is_flash_sale" className="text-xs font-black uppercase text-orange-700">Activer Vente Flash</Label>
+                    </div>
+                    {formData.is_flash_sale && (
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase tracking-wider">Date de fin Flash</Label>
+                            <Input 
+                                type="datetime-local" 
+                                value={formData.flash_sale_ends_at ? new Date(formData.flash_sale_ends_at).toISOString().slice(0, 16) : ""} 
+                                onChange={e => setFormData({...formData, flash_sale_ends_at: e.target.value})} 
+                            />
+                        </div>
+                    )}
+                  </>
+                )}
+
+                {type === 'orders' && (
+                    <div className="col-span-2 space-y-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider">Statut de la commande</Label>
+                        <select 
+                            value={formData.status} 
+                            onChange={e => setFormData({...formData, status: e.target.value})}
+                            className="w-full h-12 rounded-lg border border-slate-200 px-4 bg-white outline-none focus:ring-1 focus:ring-orange-500"
+                        >
+                            <option value="pending">En attente (Pending)</option>
+                            <option value="processing">En préparation</option>
+                            <option value="shipped">Expédié</option>
+                            <option value="delivered">Livré</option>
+                            <option value="cancelled">Annulé</option>
+                        </select>
+                    </div>
                 )}
             </div>
 

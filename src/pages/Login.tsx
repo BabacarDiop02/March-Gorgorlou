@@ -16,6 +16,9 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const BRAND_ORANGE = "#f97316"; // Orange Gorgorlou
+  const BRAND_NAVY = "#0f172a";   // Marine Gorgorlou
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -32,21 +35,24 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-900 font-sans overflow-hidden">
-      {/* Left Column: Connection Form (Dark Blue) */}
-      <div className="w-full lg:w-[45%] bg-[#0f172a] flex flex-col items-center justify-center p-12 relative">
+    <div className="min-h-screen flex bg-[#0f172a] font-sans overflow-hidden">
+      {/* Left Column: Connection Form (Navy) */}
+      <div className="w-full lg:w-[45%] bg-[#0f172a] flex flex-col items-center justify-center p-12 relative z-10 shadow-[20px_0_60px_rgba(0,0,0,0.5)]">
         <div className="w-full max-w-sm space-y-10">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-[#c5a059] tracking-tight">Connexion</h1>
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+                Connexion
+            </h1>
+            <div className="w-12 h-1 bg-[#f97316] mx-auto rounded-full"></div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-white font-bold text-sm">Identifiant</Label>
+              <Label htmlFor="username" className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Identifiant</Label>
               <Input
                 id="username"
-                placeholder="Login"
-                className="h-12 bg-[#f8fafc]/10 border-white/20 text-white placeholder:text-slate-500 focus:ring-[#c5a059] focus:border-[#c5a059] rounded-md"
+                placeholder="Ex: admin"
+                className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:ring-[#f97316] focus:border-[#f97316] rounded-xl transition-all"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -54,13 +60,13 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-bold text-sm">Mot de passe</Label>
+              <Label htmlFor="password" className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Mot de passe</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Mot de passe"
-                  className="h-12 bg-[#f8fafc]/10 border-white/20 text-white placeholder:text-slate-500 focus:ring-[#c5a059] focus:border-[#c5a059] rounded-md pr-10"
+                  placeholder="••••••••"
+                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:ring-[#f97316] focus:border-[#f97316] rounded-xl pr-10 transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -68,7 +74,7 @@ const Login = () => {
                 <button 
                   type="button" 
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-slate-400 hover:text-white transition-colors"
+                  className="absolute right-3 top-3.5 text-slate-500 hover:text-[#f97316] transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -76,55 +82,52 @@ const Login = () => {
             </div>
 
             <div className="text-right">
-              <a href="#" className="text-xs text-white/70 hover:text-[#c5a059] transition-colors font-medium italic">Mot de passe oublié ?</a>
+              <a href="#" className="text-[10px] text-slate-500 hover:text-[#f97316] transition-colors font-bold uppercase tracking-widest">Mot de passe oublié ?</a>
             </div>
 
             <Button 
                 type="submit" 
-                className="w-full h-14 bg-[#c5a059] hover:bg-[#a6864a] text-slate-900 text-lg font-black rounded-lg shadow-lg shadow-[#c5a059]/10 transition-all uppercase tracking-widest mt-4" 
+                className="w-full h-14 bg-[#f97316] hover:bg-[#ea580c] text-white text-base font-black rounded-xl shadow-lg shadow-orange-600/20 transition-all uppercase tracking-[0.1em] mt-4" 
                 disabled={loading}
             >
-              {loading ? "Chargement..." : "Se connecter"}
+              {loading ? "Vérification..." : "Se connecter"}
             </Button>
           </form>
         </div>
 
-        {/* Footer info in sidebar */}
-        <div className="absolute bottom-6 left-0 w-full text-center">
-            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em]">Design by <span className="text-white font-bold">Babacar DIOP</span> - Copyright © 2026</p>
+        <div className="absolute bottom-8 left-0 w-full text-center">
+            <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.3em]">Design by <span className="text-slate-400">Babacar DIOP</span></p>
         </div>
       </div>
 
-      {/* Right Column: Logo & Branding (White) */}
+      {/* Right Column: Branding (White) */}
       <div className="hidden lg:flex flex-1 bg-white flex-col items-center justify-center p-20 relative">
-        <div className="absolute top-0 right-0 p-8 flex items-center gap-4 text-slate-400">
-             {/* Optional top right icons if needed */}
-        </div>
-        
-        <div className="w-full max-w-md text-center space-y-12">
+        <div className="w-full max-w-md text-center space-y-12 z-10">
             <img 
               src="/images/logos/logo_marche_gorgorlou.svg" 
               alt="Marché Gorgorlou" 
-              className="mx-auto h-48 w-auto drop-shadow-2xl animate-fade-in" 
+              className="mx-auto h-56 w-auto drop-shadow-2xl animate-in zoom-in duration-700" 
             />
             
             <div className="space-y-4">
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Plateforme Digitale <br/><span className="text-[#c5a059]">Marché Gorgorlou</span></h2>
-                <div className="w-20 h-1 bg-[#c5a059] mx-auto rounded-full"></div>
-                <p className="text-slate-400 font-medium italic">Accédez à votre espace de gestion sécurisé pour administrer le catalogue, les ventes et les témoignages clients.</p>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    Plateforme Digitale <br/>
+                    <span className="text-[#f97316]">Marché Gorgorlou</span>
+                </h2>
+                <p className="text-slate-400 font-medium italic text-sm">Gestion sécurisée du catalogue et des ventes.</p>
             </div>
 
             <Button 
                 variant="outline" 
-                className="h-12 px-10 border-[#c5a059] text-[#c5a059] hover:bg-[#c5a059] hover:text-white rounded-full font-bold transition-all"
+                className="h-12 px-10 border-slate-200 text-slate-400 hover:border-[#f97316] hover:text-[#f97316] hover:bg-orange-50 rounded-full font-bold transition-all uppercase text-[10px] tracking-widest"
                 onClick={() => navigate("/")}
             >
                 Retour au site
             </Button>
         </div>
 
-        {/* Decorative corner element */}
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-slate-50 rounded-tl-[100%] z-0 pointer-events-none opacity-50"></div>
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 -skew-x-12 translate-x-1/2"></div>
       </div>
     </div>
   );

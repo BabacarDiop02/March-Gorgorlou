@@ -20,7 +20,13 @@ const Login = () => {
       const response = await api.post("/auth/login", { username: email, password });
       login(response.data.token, response.data.user);
       toast.success("Bienvenue sur Gorgorlou !");
-      navigate("/");
+      
+      // Redirection intelligente : Admin vers /admin, Client vers l'accueil
+      if (response.data.user.role === 'admin' || response.data.user.username === 'admin') {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error: any) {
       toast.error(error.message || "Identifiants invalides");
     } finally {

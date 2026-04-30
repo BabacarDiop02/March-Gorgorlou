@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LayoutDashboard, ShoppingBag, LogOut, Plus, Pencil, Trash2, Upload, ExternalLink } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, LogOut, Plus, Pencil, Trash2, Upload, ExternalLink, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Admin = () => {

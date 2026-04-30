@@ -370,11 +370,13 @@ const EditDialog = ({ data, type, onUpdate, orange }: any) => {
 const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
     const [formData, setFormData] = useState(initialData || {
         title: "", name: "", username: "", password: "", subtitle: "", description: "", 
-        badge: "", img: "", quartier: "", text: "", categoryId: "", subCategoryId: ""
+        badge: "", img: "", image_url: "", quartier: "", text: "", categoryId: "", subCategoryId: "",
+        price: "", original_price: "", stock_remaining: "", discount_percent: "",
+        is_flash_sale: false, flash_sale_ends_at: "", status: "pending", role: "user"
     });
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
-    const [preview, setPreview] = useState<string | null>(initialData?.img ? (initialData.img.startsWith('/') ? `${STORAGE_URL}${initialData.img}` : initialData.img) : null);
+    const [preview, setPreview] = useState<string | null>(initialData?.img || initialData?.image_url ? ( (initialData.img || initialData.image_url).startsWith('/') ? `${STORAGE_URL}${initialData.img || initialData.image_url}` : (initialData.img || initialData.image_url) ) : null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
@@ -389,13 +391,13 @@ const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
       setLoading(true);
       try {
           let finalData = { ...formData };
-          // Nettoyage pour les relations Prisma
           delete finalData.subCategories;
           delete finalData.items;
 
-          if (file && !['testimonials', 'users'].includes(type)) {
+          if (file && !['testimonials', 'users', 'orders'].includes(type)) {
               const imgUrl = await uploadImage(file);
-              finalData.img = imgUrl;
+              if (type === 'products') finalData.image_url = imgUrl;
+              else finalData.img = imgUrl;
           }
           
           const endpoint = type.toLowerCase();
@@ -413,106 +415,147 @@ const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
       }
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-2 gap-8">
-                {type === 'users' ? (
-                  <>
-                    <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider">Identifiant Admin</Label>
-                        <Input value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider">Mot de passe</Label>
-                        <Input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder={initialData ? "Laisser vide pour ne pas changer" : "Requis"} required={!initialData} />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider">Titre / Nom <span className="text-orange-500">*</span></Label>
-                        <Input value={formData.title || formData.name} onChange={e => setFormData({...formData, [formData.title !== undefined ? 'title' : 'name']: e.target.value})} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider">ID Parent / Catégorie</Label>
-                        <Input value={formData.categoryId || formData.subCategoryId || formData.quartier} onChange={e => setFormData({...formData, categoryId: e.target.value})} placeholder="Ex: 1 ou Nom quartier" />
-                    </div>
-                  </>
-                )}
-
-                <div className="col-span-2 space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider">Description / Contenu <span className="text-orange-500">*</span></Label>
-                    <textarea 
-                        value={formData.description || formData.subtitle || formData.text} 
-                        onChange={e => setFormData({...formData, [formData.description !== undefined ? 'description' : formData.subtitle !== undefined ? 'subtitle' : 'text']: e.target.value})} 
-                        className="w-full min-h-[120px] p-4 rounded-lg border border-slate-200 outline-none focus:ring-1 focus:ring-orange-500"
-                        required={type !== 'users'}
-                    />
+    const renderProductFields = () => (
+        <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Nom du produit</Label>
+                    <Input className="h-12 border-slate-200" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ex: Casque de chantier" required />
                 </div>
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Catégorie (ID)</Label>
+                    <Input className="h-12 border-slate-200" value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} placeholder="Ex: 1" />
+                </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-6">
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Prix (FCFA)</Label>
+                    <Input type="number" className="h-12 border-slate-200" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} required />
+                </div>
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Prix Barré (FCFA)</Label>
+                    <Input type="number" className="h-12 border-slate-200" value={formData.original_price} onChange={e => setFormData({...formData, original_price: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Stock restant</Label>
+                    <Input type="number" className="h-12 border-slate-200" value={formData.stock_remaining} onChange={e => setFormData({...formData, stock_remaining: e.target.value})} />
+                </div>
+            </div>
 
-                {!['testimonials', 'users', 'orders'].includes(type) && (
-                  <>
-                    <div className="col-span-2 space-y-4">
-                        <Label className="text-xs font-bold uppercase tracking-wider">Média / Image</Label>
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-orange-500 transition-all relative overflow-hidden min-h-[200px]" onClick={() => document.getElementById('img-upload')?.click()}>
-                            {preview ? (
-                                <img src={preview} alt="Preview" className="w-full h-full absolute inset-0 object-contain bg-white" />
-                            ) : (
-                                <>
-                                  <Upload size={24} className="text-slate-300" />
-                                  <p className="text-xs font-bold text-slate-500">Téléverser un nouveau fichier</p>
-                                </>
-                            )}
-                            <input id="img-upload" type="file" className="hidden" onChange={handleFileChange} />
+            <div className="p-6 bg-orange-50 border border-orange-100 rounded-2xl space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white">
+                            <Bell size={16} />
                         </div>
+                        <Label className="text-xs font-black uppercase text-orange-800">Vente Flash</Label>
                     </div>
-                    <div className="flex items-center space-x-2 bg-orange-50 p-4 rounded-xl border border-orange-100">
-                        <input 
-                            type="checkbox" 
-                            id="is_flash_sale"
-                            checked={formData.is_flash_sale} 
-                            onChange={e => setFormData({...formData, is_flash_sale: e.target.checked})} 
-                            className="w-5 h-5 accent-[#F97316]"
-                        />
-                        <Label htmlFor="is_flash_sale" className="text-xs font-black uppercase text-orange-700">Activer Vente Flash</Label>
-                    </div>
-                    {formData.is_flash_sale && (
+                    <input type="checkbox" className="w-5 h-5 accent-orange-500" checked={formData.is_flash_sale} onChange={e => setFormData({...formData, is_flash_sale: e.target.checked})} />
+                </div>
+                {formData.is_flash_sale && (
+                    <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider">Date de fin Flash</Label>
-                            <Input 
-                                type="datetime-local" 
-                                value={formData.flash_sale_ends_at ? new Date(formData.flash_sale_ends_at).toISOString().slice(0, 16) : ""} 
-                                onChange={e => setFormData({...formData, flash_sale_ends_at: e.target.value})} 
-                            />
+                            <Label className="text-[10px] font-bold uppercase text-orange-600">Fin de la promo</Label>
+                            <Input type="datetime-local" className="bg-white border-orange-200" value={formData.flash_sale_ends_at ? new Date(formData.flash_sale_ends_at).toISOString().slice(0, 16) : ""} onChange={e => setFormData({...formData, flash_sale_ends_at: e.target.value})} />
                         </div>
-                    )}
-                  </>
-                )}
-
-                {type === 'orders' && (
-                    <div className="col-span-2 space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider">Statut de la commande</Label>
-                        <select 
-                            value={formData.status} 
-                            onChange={e => setFormData({...formData, status: e.target.value})}
-                            className="w-full h-12 rounded-lg border border-slate-200 px-4 bg-white outline-none focus:ring-1 focus:ring-orange-500"
-                        >
-                            <option value="pending">En attente (Pending)</option>
-                            <option value="processing">En préparation</option>
-                            <option value="shipped">Expédié</option>
-                            <option value="delivered">Livré</option>
-                            <option value="cancelled">Annulé</option>
-                        </select>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-bold uppercase text-orange-600">% de réduction</Label>
+                            <Input type="number" className="bg-white border-orange-200" value={formData.discount_percent} onChange={e => setFormData({...formData, discount_percent: e.target.value})} placeholder="Ex: 20" />
+                        </div>
                     </div>
                 )}
             </div>
 
-            <div className="flex justify-end gap-4 pt-8 border-t">
+            <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400">Image du produit</Label>
+                <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-orange-500 transition-all cursor-pointer relative min-h-[250px]" onClick={() => document.getElementById('file-input')?.click()}>
+                    {preview ? (
+                        <img src={preview} className="absolute inset-0 w-full h-full object-contain p-4" />
+                    ) : (
+                        <>
+                            <Upload size={32} className="text-slate-300" />
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Choisir une image</p>
+                        </>
+                    )}
+                    <input id="file-input" type="file" className="hidden" onChange={handleFileChange} />
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderUserFields = () => (
+        <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Nom d'utilisateur</Label>
+                    <Input className="h-12" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} required />
+                </div>
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Rôle système</Label>
+                    <select className="w-full h-12 border border-slate-200 rounded-lg px-4 bg-white" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+                        <option value="user">Utilisateur standard</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400">Nouveau Mot de passe</Label>
+                <Input type="password" title="password" className="h-12" placeholder="Laissez vide pour ne pas changer" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+            </div>
+        </div>
+    );
+
+    const renderOrderFields = () => (
+        <div className="space-y-6">
+            <div className="p-8 bg-slate-50 border border-slate-200 rounded-2xl">
+                <Label className="text-[10px] font-black uppercase text-slate-400 mb-4 block">Statut de livraison</Label>
+                <div className="grid grid-cols-2 gap-3">
+                    {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                        <div 
+                            key={status}
+                            onClick={() => setFormData({...formData, status})}
+                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-3 ${formData.status === status ? 'border-orange-500 bg-orange-50' : 'border-white bg-white hover:border-slate-200'}`}
+                        >
+                            <div className={`w-3 h-3 rounded-full ${status === 'pending' ? 'bg-yellow-500' : status === 'delivered' ? 'bg-green-500' : 'bg-slate-300'}`}></div>
+                            <span className="text-xs font-bold uppercase tracking-wider">{status}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderGenericFields = () => (
+        <div className="space-y-6">
+            <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400">Titre / Nom</Label>
+                <Input className="h-12" value={formData.title || formData.name} onChange={e => setFormData({...formData, title: e.target.value})} required />
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400">Description / Texte</Label>
+                <textarea 
+                    className="w-full min-h-[150px] border border-slate-200 rounded-xl p-4 outline-none focus:border-orange-500"
+                    value={formData.description || formData.subtitle || formData.text}
+                    onChange={e => setFormData({...formData, description: e.target.value})}
+                />
+            </div>
+        </div>
+    );
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-10 animate-in fade-in duration-500">
+            {type === 'products' && renderProductFields()}
+            {type === 'users' && renderUserFields()}
+            {type === 'orders' && renderOrderFields()}
+            {!['products', 'users', 'orders'].includes(type) && renderGenericFields()}
+
+            <div className="flex justify-end gap-4 pt-10 border-t border-slate-100">
                 <DialogPrimitive.Close asChild>
-                    <Button type="button" variant="ghost" className="font-bold text-slate-400">Annuler</Button>
+                    <Button type="button" variant="ghost" className="h-12 px-8 font-bold text-slate-400 uppercase text-[10px] tracking-widest">Annuler</Button>
                 </DialogPrimitive.Close>
-                <Button type="submit" className="text-white px-12 h-12 rounded-lg font-bold shadow-lg" style={{backgroundColor: orange}} disabled={loading}>
-                    {loading ? "Traitement..." : "Sauvegarder"}
+                <Button type="submit" disabled={loading} className="h-12 px-12 bg-[#0f172a] hover:bg-slate-800 text-white font-bold uppercase text-[10px] tracking-widest shadow-xl shadow-slate-900/20 rounded-xl">
+                    {loading ? "Traitement..." : "Sauvegarder l'élément"}
                 </Button>
             </div>
         </form>

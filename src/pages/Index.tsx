@@ -10,6 +10,7 @@ import {
   ShieldCheck, 
   Truck, 
   ArrowRight,
+  ChevronRight,
   MessageCircle,
   Menu,
   Search,

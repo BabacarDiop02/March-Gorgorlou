@@ -139,7 +139,7 @@
 }
 
 .container-login form {
-  background-color: #0f172a; /* Navy pour le formulaire de login */
+  background-color: #ffffff; /* Fond blanc pour le formulaire */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,13 +155,19 @@
 }
 
 .container-login input {
-  background-color: #eee;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 10px 15px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0; /* Bordure légère */
+  border-radius: 8px;
+  padding: 12px 15px;
   margin: 8px 0;
   width: 100%;
   outline: none;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.container-login label {
+  color: #64748b !important; /* Label gris sur fond blanc */
 }
 
 .container-login button {

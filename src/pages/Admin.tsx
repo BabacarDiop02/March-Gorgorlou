@@ -110,11 +110,11 @@ const Admin = () => {
     <div className="min-h-screen bg-[#f8fafc] flex font-sans text-slate-900">
       {/* Sidebar Complète - Toutes les tables */}
       <aside className="w-72 bg-[#0f172a] text-white flex flex-col shadow-2xl z-20 shrink-0">
-        <div className="p-8 flex flex-col items-center border-b border-white/5 bg-white mb-6">
-          <img src="/images/logos/logo_marche_gorgorlou.svg" alt="Logo" className="h-16 w-auto" />
+        <div className="h-20 flex flex-col items-center justify-center border-b border-white/5 bg-white">
+          <img src="/images/logos/logo_marche_gorgorlou.svg" alt="Logo" className="h-10 w-auto" />
         </div>
         
-        <div className="flex-1 overflow-y-auto px-4 space-y-6 pb-10">
+        <div className="flex-1 overflow-y-auto px-4 space-y-6 pb-10 pt-6">
           <div>
             <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Principal</p>
             <nav className="space-y-1">

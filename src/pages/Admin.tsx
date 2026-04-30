@@ -371,26 +371,51 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
     // Sub-elements management
     const [newSub, setNewSub] = useState({ name: "", description: "", image: "" });
     const [newItem, setNewItem] = useState({ name: "", price: "", image: "" });
+    const [editingSubId, setEditingSubId] = useState<number | null>(null);
+    const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
-    const handleAddSub = async () => {
+    const handleSaveSub = async () => {
         if (!initialData) return toast.error("Veuillez d'abord enregistrer la catégorie.");
         try {
-            await api.post("/subcategories", { ...newSub, categoryId: initialData.id });
-            toast.success("Sous-catégorie ajoutée.");
+            if (editingSubId) {
+                await api.put(`/subcategories/${editingSubId}`, { ...newSub, categoryId: initialData.id });
+                toast.success("Sous-catégorie mise à jour.");
+            } else {
+                await api.post("/subcategories", { ...newSub, categoryId: initialData.id });
+                toast.success("Sous-catégorie ajoutée.");
+            }
             setNewSub({ name: "", description: "", image: "" });
+            setEditingSubId(null);
             onSuccess(); // Refresh parent
-        } catch (e) { toast.error("Erreur lors de l'ajout."); }
+        } catch (e) { toast.error("Erreur lors de l'enregistrement."); }
     };
 
-    const handleAddItem = async () => {
+    const handleSaveItem = async () => {
         if (!initialData) return toast.error("Veuillez d'abord enregistrer la catégorie.");
         try {
-            await api.post("/universe-items", { ...newItem, categoryId: initialData.id });
-            toast.success("Produit ajouté.");
+            if (editingItemId) {
+                await api.put(`/universe-items/${editingItemId}`, { ...newItem, categoryId: initialData.id });
+                toast.success("Produit mis à jour.");
+            } else {
+                await api.post("/universe-items", { ...newItem, categoryId: initialData.id });
+                toast.success("Produit ajouté.");
+            }
             setNewItem({ name: "", price: "", image: "" });
+            setEditingItemId(null);
             onSuccess(); // Refresh parent
-        } catch (e) { toast.error("Erreur lors de l'ajout."); }
+        } catch (e) { toast.error("Erreur lors de l'enregistrement."); }
     };
+
+    const startEditSub = (sub: any) => {
+        setNewSub({ name: sub.name, description: sub.description, image: sub.image });
+        setEditingSubId(sub.id);
+    };
+
+    const startEditItem = (item: any) => {
+        setNewItem({ name: item.name, price: item.price, image: item.image });
+        setEditingItemId(item.id);
+    };
+
 
     const handleDeleteSub = async (id: number) => {
         try {
@@ -503,13 +528,21 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
                                                         </div>
                                                         <span className="text-sm font-bold">{sub.name}</span>
                                                     </div>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteSub(sub.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                    <div className="flex items-center gap-1">
+                                                        <Button variant="ghost" size="icon" onClick={() => startEditSub(sub)} className="h-8 w-8 text-blue-400 hover:text-blue-600"><Pencil size={14} /></Button>
+                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteSub(sub.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                    </div>
                                                 </div>
                                             ))}
                                             <div className="flex gap-2 items-center bg-white p-2 rounded-xl border border-dashed border-slate-300">
                                                 <Input placeholder="Nom" value={newSub.name} onChange={e => setNewSub({...newSub, name: e.target.value})} className="h-8 text-xs" />
                                                 <Input placeholder="Image URL / Path" value={newSub.image} onChange={e => setNewSub({...newSub, image: e.target.value})} className="h-8 text-xs" />
-                                                <Button type="button" size="sm" onClick={handleAddSub} className="h-8 px-3 rounded-lg"><Plus size={14} /></Button>
+                                                <Button type="button" size="sm" onClick={handleSaveSub} className={`h-8 px-3 rounded-lg ${editingSubId ? 'bg-blue-500 hover:bg-blue-600' : ''}`}>
+                                                    {editingSubId ? <Pencil size={14} /> : <Plus size={14} />}
+                                                </Button>
+                                                {editingSubId && (
+                                                    <Button type="button" variant="ghost" size="sm" onClick={() => { setEditingSubId(null); setNewSub({ name: "", description: "", image: "" }); }} className="h-8 px-2 rounded-lg text-slate-400"><X size={14} /></Button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -526,14 +559,22 @@ const ItemForm = ({ initialData, type, onSuccess }: any) => {
                                                         </div>
                                                         <span className="text-sm font-bold">{item.name} ({item.price})</span>
                                                     </div>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                    <div className="flex items-center gap-1">
+                                                        <Button variant="ghost" size="icon" onClick={() => startEditItem(item)} className="h-8 w-8 text-blue-400 hover:text-blue-600"><Pencil size={14} /></Button>
+                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)} className="h-8 w-8 text-red-400 hover:text-red-600"><Trash2 size={14} /></Button>
+                                                    </div>
                                                 </div>
                                             ))}
                                             <div className="flex gap-2 items-center bg-white p-2 rounded-xl border border-dashed border-slate-300">
                                                 <Input placeholder="Nom produit" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} className="h-8 text-xs" />
                                                 <Input placeholder="Prix (ex: 5 000 FCFA)" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} className="h-8 text-xs" />
                                                 <Input placeholder="Image URL" value={newItem.image} onChange={e => setNewItem({...newItem, image: e.target.value})} className="h-8 text-xs" />
-                                                <Button type="button" size="sm" onClick={handleAddItem} className="h-8 px-3 rounded-lg"><Plus size={14} /></Button>
+                                                <Button type="button" size="sm" onClick={handleSaveItem} className={`h-8 px-3 rounded-lg ${editingItemId ? 'bg-blue-500 hover:bg-blue-600' : ''}`}>
+                                                    {editingItemId ? <Pencil size={14} /> : <Plus size={14} />}
+                                                </Button>
+                                                {editingItemId && (
+                                                    <Button type="button" variant="ghost" size="sm" onClick={() => { setEditingItemId(null); setNewItem({ name: "", price: "", image: "" }); }} className="h-8 px-2 rounded-lg text-slate-400"><X size={14} /></Button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

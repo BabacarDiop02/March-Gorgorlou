@@ -164,17 +164,17 @@ const Index = () => {
               {Array.isArray(flashProducts) && flashProducts.map(p => (
                 <div key={p.id} className="group cursor-pointer">
                   <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-slate-50 border border-slate-100">
-                    <img src={p.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <Badge className="absolute top-2 left-2 bg-[#F97316] text-white border-none text-[8px] font-black">{p.badge}</Badge>
-                    <Badge className="absolute top-2 right-2 bg-yellow-400 text-black border-none text-[8px] font-black">-{p.discount}%</Badge>
+                    <img src={p.image_url || "/placeholder.png"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <Badge className="absolute top-2 left-2 bg-[#F97316] text-white border-none text-[8px] font-black">{p.badge || "OFFRE"}</Badge>
+                    <Badge className="absolute top-2 right-2 bg-yellow-400 text-black border-none text-[8px] font-black">-{p.discount_percent || 0}%</Badge>
                   </div>
                   <h4 className="text-xs font-bold text-slate-700 line-clamp-2 mb-1 h-8">{p.name}</h4>
-                  <p className="text-sm font-black text-[#F97316]">{p.price.toLocaleString()} FCFA</p>
-                  <p className="text-[10px] text-slate-400 line-through mb-2">{p.oldPrice.toLocaleString()} FCFA</p>
+                  <p className="text-sm font-black text-[#F97316]">{(p.price || 0).toLocaleString()} FCFA</p>
+                  <p className="text-[10px] text-slate-400 line-through mb-2">{(p.original_price || 0).toLocaleString()} FCFA</p>
                   <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                     <div className="h-full bg-red-500 rounded-full" style={{width: `${(p.stock / 20) * 100}%`}}></div>
+                     <div className="h-full bg-red-500 rounded-full" style={{width: `${((p.stock_remaining || 0) / 20) * 100}%`}}></div>
                   </div>
-                  <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Stock restant : {p.stock}</p>
+                  <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Stock restant : {p.stock_remaining || 0}</p>
                 </div>
               ))}
             </div>
@@ -221,14 +221,16 @@ const Index = () => {
             {Array.isArray(bestOffers) && bestOffers.map(p => (
               <div key={p.id} className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all group scale-up-center">
                 <div className="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50">
-                  <img src={p.img} className="w-full h-full object-cover" />
-                  <Badge className="absolute top-2 left-2 bg-[#F97316] border-none text-[8px] font-black">{p.badge}</Badge>
+                  <img src={p.image_url || "/placeholder.png"} className="w-full h-full object-cover" />
+                  <Badge className="absolute top-2 left-2 bg-[#F97316] border-none text-[8px] font-black">{p.badge || "PROMO"}</Badge>
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                     <Button className="bg-[#F97316] rounded-full p-3 h-12 w-12"><ShoppingBag size={20} /></Button>
+                     <Link to={`/produit/${p.id}`}>
+                        <Button className="bg-[#F97316] rounded-full p-3 h-12 w-12"><ShoppingBag size={20} /></Button>
+                     </Link>
                   </div>
                 </div>
                 <h4 className="text-sm font-bold text-[#432818] line-clamp-1 mb-1">{p.name}</h4>
-                <p className="text-lg font-black text-[#F97316]">{p.price.toLocaleString()} FCFA</p>
+                <p className="text-lg font-black text-[#F97316]">{(p.price || 0).toLocaleString()} FCFA</p>
                 <div className="flex items-center gap-2 mt-2">
                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
                    <span className="text-[10px] font-bold text-slate-400">4.9 (120 avis)</span>

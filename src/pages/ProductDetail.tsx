@@ -72,18 +72,18 @@ const ProductDetail = () => {
           <div className="lg:col-span-7">
              <div className="sticky top-28 space-y-6">
                 <div className="aspect-square bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-orange-100 group">
-                   <img src={product.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={product.name} />
-                   {product.discount > 0 && (
+                   <img src={product.image_url || "/placeholder.png"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={product.name} />
+                   {(product.discount_percent || 0) > 0 && (
                      <div className="absolute top-8 right-8 w-20 h-20 bg-red-600 rounded-full flex flex-col items-center justify-center text-white shadow-xl rotate-12">
                         <span className="text-xs font-bold uppercase">PROMO</span>
-                        <span className="text-xl font-black">-{product.discount}%</span>
+                        <span className="text-xl font-black">-{product.discount_percent}%</span>
                      </div>
                    )}
                 </div>
                 <div className="grid grid-cols-4 gap-4">
                    {[1,2,3,4].map(i => (
                      <div key={i} className="aspect-square bg-white rounded-2xl overflow-hidden border border-orange-50 cursor-pointer hover:border-[#F97316] transition-all">
-                        <img src={product.image_url} className="w-full h-full object-cover opacity-50 hover:opacity-100" />
+                        <img src={product.image_url || "/placeholder.png"} className="w-full h-full object-cover opacity-50 hover:opacity-100" />
                      </div>
                    ))}
                 </div>
@@ -95,12 +95,12 @@ const ProductDetail = () => {
              <div>
                 <div className="flex items-center gap-3 mb-4">
                    <Badge className="bg-[#F97316] text-white border-none px-3 py-1 text-[10px] font-black uppercase tracking-widest">
-                      {product.badge}
+                      {product.badge || "EXCLUSIF"}
                    </Badge>
                    <div className="flex items-center gap-1 text-yellow-400">
                       <Star size={14} className="fill-current" />
-                      <span className="text-sm font-black text-slate-900">{product.rating}</span>
-                      <span className="text-xs text-slate-400 font-bold">({product.reviews_count} avis)</span>
+                      <span className="text-sm font-black text-slate-900">{product.rating || 5.0}</span>
+                      <span className="text-xs text-slate-400 font-bold">({product.reviews_count || 12} avis)</span>
                    </div>
                 </div>
                 <h1 className="text-4xl font-black leading-tight mb-4 tracking-tighter">{product.name}</h1>
@@ -113,12 +113,12 @@ const ProductDetail = () => {
                 <div className="flex items-end justify-between">
                    <div>
                       <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Prix Promo</p>
-                      <h2 className="text-4xl font-black text-[#F97316]">{product.price.toLocaleString()} FCFA</h2>
-                      {product.oldPrice && (
-                        <p className="text-sm text-slate-300 line-through font-bold">{product.oldPrice.toLocaleString()} FCFA</p>
+                      <h2 className="text-4xl font-black text-[#F97316]">{(product.price || 0).toLocaleString()} FCFA</h2>
+                      {product.original_price && (
+                        <p className="text-sm text-slate-300 line-through font-bold">{(product.original_price || 0).toLocaleString()} FCFA</p>
                       )}
                    </div>
-                   {product.stock_remaining <= 5 && (
+                   {(product.stock_remaining || 0) <= 5 && (
                      <div className="bg-red-50 px-4 py-2 rounded-xl flex items-center gap-2 text-red-600 animate-pulse">
                         <Clock size={16} />
                         <span className="text-[10px] font-black uppercase">Plus que {product.stock_remaining} en stock !</span>

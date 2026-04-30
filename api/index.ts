@@ -74,13 +74,38 @@ app.post("/api/auth/login", async (req, res) => {
       const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
         expiresIn: "24h",
       });
-      res.json({ token, user: { id: user.id, username: user.username } });
+      res.json({ token, user: { id: user.id, username: user.username, role: user.role || 'admin' } });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Database error", details: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+// Users management
+app.get("/api/users", authenticateJWT, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, username: true, role: true, createdAt: true }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+app.post("/api/users", authenticateJWT, async (req, res) => {
+  const { username, password, role } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { username, password: hashedPassword, role: role || 'admin' }
+    });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
   }
 });
 
@@ -150,12 +175,33 @@ app.delete("/api/categories/:id", authenticateJWT, async (req, res) => {
 
 // --- SubCategories & Items Management ---
 
+app.get("/api/subcategories", async (req, res) => {
+  try {
+    const subs = await prisma.subCategory.findMany({ include: { category: true } });
+    res.json(subs);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 app.post("/api/subcategories", authenticateJWT, async (req, res) => {
   try {
     const sub = await prisma.subCategory.create({ data: req.body });
     res.json(sub);
   } catch (error) {
     res.status(500).json({ error: "Database error", details: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.put("/api/subcategories/:id", authenticateJWT, async (req, res) => {
+  try {
+    const sub = await prisma.subCategory.update({
+      where: { id: parseInt(req.params.id) },
+      data: req.body
+    });
+    res.json(sub);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
   }
 });
 
@@ -168,12 +214,33 @@ app.delete("/api/subcategories/:id", authenticateJWT, async (req, res) => {
   }
 });
 
+app.get("/api/universe-items", async (req, res) => {
+  try {
+    const items = await prisma.universeItem.findMany({ include: { category: true } });
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 app.post("/api/universe-items", authenticateJWT, async (req, res) => {
   try {
     const item = await prisma.universeItem.create({ data: req.body });
     res.json(item);
   } catch (error) {
     res.status(500).json({ error: "Database error", details: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.put("/api/universe-items/:id", authenticateJWT, async (req, res) => {
+  try {
+    const item = await prisma.universeItem.update({
+      where: { id: parseInt(req.params.id) },
+      data: req.body
+    });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
   }
 });
 

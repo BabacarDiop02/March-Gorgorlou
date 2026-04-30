@@ -66,7 +66,7 @@ const Admin = () => {
       const [cats, subCats, uniItems, prods, tests, ords, usrs] = await Promise.all([
         api.get("/categories"),
         api.get("/subcategories"),
-        api.get("/universeitems"),
+        api.get("/universe-items"),
         api.get("/products"),
         api.get("/testimonials"),
         api.get("/orders"),
@@ -97,7 +97,8 @@ const Admin = () => {
   const handleDelete = async (type: string, id: number) => {
     if (!confirm("Voulez-vous vraiment supprimer cet élément ?")) return;
     try {
-      const endpoint = type.toLowerCase();
+      let endpoint = type.toLowerCase();
+      if (endpoint === 'universeitems') endpoint = 'universe-items';
       await api.delete(`/${endpoint}/${id}`);
       toast.success("Supprimé avec succès.");
       fetchData();
@@ -400,7 +401,9 @@ const ItemForm = ({ initialData, type, onSuccess, orange }: any) => {
               else finalData.img = imgUrl;
           }
           
-          const endpoint = type.toLowerCase();
+          let endpoint = type.toLowerCase();
+          if (endpoint === 'universeitems') endpoint = 'universe-items';
+
           if (initialData) {
               await api.put(`/${endpoint}/${initialData.id}`, finalData);
           } else {

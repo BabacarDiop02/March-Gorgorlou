@@ -47,9 +47,9 @@ const Login = () => {
         {/* Sign In Panel (Connexion Form) */}
         <div className="form-container sign-in-container">
           <form onSubmit={handleLogin}>
-            <h3 className="mb-8 text-2xl font-black uppercase tracking-tighter text-[#0f172a]">Connexion</h3>
+            <h3 style={{color: '#f97316'}} className="mb-8 text-2xl font-black uppercase tracking-tighter">Connexion</h3>
             
-            <label className="w-full text-left text-xs font-bold uppercase tracking-widest mb-1">Identifiant</label>
+            <label className="w-full text-left text-white text-xs font-bold uppercase tracking-widest mb-1">Identifiant</label>
             <input 
                 type="text" 
                 placeholder="Login ou Email" 
@@ -59,7 +59,7 @@ const Login = () => {
             />
 
             <div className="password-container mt-4 w-full text-left">
-                <label className="w-full text-left text-xs font-bold uppercase tracking-widest mb-1">Mot de passe</label>
+                <label className="w-full text-left text-white text-xs font-bold uppercase tracking-widest mb-1">Mot de passe</label>
                 <input 
                     type="password" 
                     placeholder="Mot de passe" 
@@ -68,7 +68,7 @@ const Login = () => {
                     required
                 />
                 <div className="w-full d-flex justify-content-end mt-1 text-right">
-                    <a href="#" className="text-slate-400 text-[10px] uppercase font-bold tracking-widest hover:text-[#f97316] transition-colors">Mot de passe oublié ?</a>
+                    <a href="#" className="text-white text-[10px] uppercase font-bold tracking-widest hover:underline">Mot de passe oublié ?</a>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@ const Login = () => {
               <p className="text-sm font-medium mb-8">Cliquez pour vous connecter à votre espace personnel Gorgorlou</p>
               <button className="ghost more-learn" onClick={() => setIsRightPanelActive(false)}>Se connecter</button>
             </div>
-            <div className="overlay-panel overlay-right">
+            <div className="overlay-panel overlay-right bg-white text-[#0f172a]">
               <img className="logo-light mb-6" style={{width: '150px', borderRadius: '10px'}} src="/images/logos/logo_marche_gorgorlou.svg" alt="Gorgorlou" />
               <p className="text-sm font-medium mb-8">Logiciel de Gestion Commerciale & E-commerce au Sénégal</p>
               <button className="ghost text-black more-learn border-[#333]" onClick={() => setIsRightPanelActive(true)}>En savoir plus</button>

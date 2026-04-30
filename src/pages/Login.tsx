@@ -62,7 +62,7 @@ const Login = () => {
             <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter">Créer un compte</h1>
             <div className="w-full space-y-3">
               <input type="text" placeholder="Nom complet" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={fullName} onChange={e => setFullName(e.target.value)} required />
-              <input type="email" placeholder="Email" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={email} onChange={e => setEmail(e.target.value)} required />
+              <input type="text" placeholder="Email ou Identifiant" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={email} onChange={e => setEmail(e.target.value)} required />
               <input type="tel" placeholder="Téléphone" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={phone} onChange={e => setPhone(e.target.value)} required />
               <input type="password" placeholder="Mot de passe" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
@@ -77,7 +77,7 @@ const Login = () => {
           <form onSubmit={handleLogin} className="bg-white p-12 flex flex-col items-center justify-center text-center h-full">
             <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter">Connexion</h1>
             <div className="w-full space-y-3">
-              <input type="email" placeholder="Email" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={email} onChange={e => setEmail(e.target.value)} required />
+              <input type="text" placeholder="Email ou Identifiant" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={email} onChange={e => setEmail(e.target.value)} required />
               <input type="password" placeholder="Mot de passe" className="bg-[#f3f4f6] border-none p-3 w-full outline-none rounded-lg text-sm font-bold" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
             <a href="#" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#f97316] transition-colors mt-4">Mot de passe oublié ?</a>

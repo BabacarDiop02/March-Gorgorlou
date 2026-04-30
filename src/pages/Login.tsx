@@ -211,7 +211,7 @@ const Login = () => {
         }
       `}</style>
 
-      <div className={`container-login ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
+      <div className={`container-login absolute top-[47%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
         {/* Info Panel (Initially Hidden on right, becomes visible when active) */}
         <div className="form-container sign-up-container">
           <div className="form-content bg-white">

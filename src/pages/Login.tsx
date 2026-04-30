@@ -16,7 +16,8 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post("/auth/login", { email, password });
+      // On envoie 'username' car c'est ce que votre serveur Prisma attend
+      const response = await api.post("/auth/login", { username: email, password });
       login(response.data.token, response.data.user);
       toast.success("Bienvenue sur Gorgorlou !");
       navigate("/");

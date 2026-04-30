@@ -74,7 +74,7 @@ app.post("/api/auth/login", async (req, res) => {
       const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
         expiresIn: "24h",
       });
-      res.json({ token, user: { id: user.id, username: user.username, role: user.role || 'admin' } });
+      res.json({ token, user: { id: user.id, username: user.username } });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
@@ -88,7 +88,7 @@ app.post("/api/auth/login", async (req, res) => {
 app.get("/api/users", authenticateJWT, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      select: { id: true, username: true, role: true, createdAt: true }
+      select: { id: true, username: true }
     });
     res.json(users);
   } catch (error) {
@@ -101,7 +101,7 @@ app.post("/api/users", authenticateJWT, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { username, password: hashedPassword, role: role || 'admin' }
+      data: { username, password: hashedPassword }
     });
     res.json(user);
   } catch (error) {

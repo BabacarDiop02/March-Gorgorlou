@@ -50,9 +50,9 @@ const Login = () => {
           box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
           position: relative;
           overflow: hidden;
-          width: 850px;
-          max-width: 90%;
-          min-height: 550px;
+          width: 728px;
+          max-width: 85%;
+          min-height: 490px;
         }
 
         .form-container {
@@ -277,10 +277,10 @@ const Login = () => {
 
             <button 
                 type="submit" 
-                className="mt-10 bg-[#f97316] hover:bg-[#ea580c] text-white py-3 px-12 rounded font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20 transition-all"
+                className="mt-6 bg-[#f97316] hover:bg-[#ea580c] text-white py-2.5 px-10 rounded font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20 transition-all text-xs"
                 disabled={loading}
             >
-                {loading ? "Chargement..." : "Se connecter"}
+                {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
         </div>
